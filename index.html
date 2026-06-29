@@ -344,21 +344,20 @@
             }
 
             // 2. שליחת מייל אוטומטי דרך EmailJS (ברקע)
-            let emailSent = false;
-            if (emailjs._id !== "YOUR_EMAILJS_PUBLIC_KEY") {
-                try {
-                    await emailjs.send("service_5lsrr43", "template_lw08urn", {
-                        to_name: name,
-                        to_email: email,
-                        customer_phone: phone,
-                        customer_address: address,
-                        order_items: itemsText,
-                        shipping_method: shippingText,
-                        total_price: total,
-                        customer_notes: notes
-                    });
-                    emailSent = true;
-                } catch (err) { console.error("EmailJS Error:", err); }
+            try {
+                await emailjs.send("service_5lsrr43", "template_lw08urn", {
+                    to_name: name,
+                    to_email: email,
+                    customer_phone: phone,
+                    customer_address: address,
+                    order_items: itemsText,
+                    shipping_method: shippingText,
+                    total_price: total,
+                    customer_notes: notes
+                });
+                console.log("Email sent successfully!");
+            } catch (err) { 
+                console.error("EmailJS Error details:", err); 
             }
 
             alert(`✅ ההזמנה שלך התקבלה בהצלחה!\n\nתודה ${name}, פרטי הרכישה נשמרו במערכת ונשלחו אליך אישור במייל.`);
