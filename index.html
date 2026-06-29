@@ -308,41 +308,62 @@
         }
 
         // פונקציית שליחת ההזמנה האוטומטית והמתקדמת ללא התערבות הלקוח
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            if (cart.length === 0) { alert("עגלת הקניות ריקה!"); return; }
+     async function handleFormSubmit(e) {
+    e.preventDefault();
+    if (cart.length === 0) { alert("עגלת הקניות ריקה!"); return; }
 
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.innerText = "מעבד הזמנה... נא לא לסגור";
-            submitBtn.disabled = true;
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.innerText = "מעבד הזמנה... נא לא לסגור";
+    submitBtn.disabled = true;
 
-            const name = document.getElementById('form-name').value;
-            const phone = document.getElementById('form-phone').value;
-            const email = document.getElementById('form-email').value;
-            const address = document.getElementById('form-address').value;
-            const notes = document.getElementById('form-notes').value || "אין";
+    const name = document.getElementById('form-name').value.trim();
+    const phone = document.getElementById('form-phone').value.trim();
+    const customerEmail = document.getElementById('form-email').value.trim();
+    const address = document.getElementById('form-address').value.trim();
+    const notes = document.getElementById('form-notes').value.trim() || "אין";
 
-            let shippingText = "";
-            const shippingRadios = document.getElementsByName('shipping');
-            for (const r of shippingRadios) { if (r.checked) { shippingText = r.nextSibling.textContent.trim(); break; } }
-            const total = document.getElementById('checkout-total').innerText;
+    let shippingText = "";
+    const shippingRadios = document.getElementsByName('shipping');
+    for (const r of shippingRadios) { 
+        if (r.checked) { 
+            shippingText = r.nextSibling.textContent.trim(); 
+            break; 
+        } 
+    }
+    const total = document.getElementById('checkout-total').innerText;
 
-            let itemsText = cart.map(i => `${i.title} (כמות: ${i.quantity}, אורך: ${i.length}, שדרוג: ${i.upgradeText})`).join(' | ');
+    let itemsText = cart.map(i => `${i.title} (כמות: ${i.quantity}, אורך: ${i.length}, שדרוג: ${i.upgradeText})`).join(' | ');
 
-            // 1. שמירת ההזמנה אוטומטית בגוגל שיטס של החנות (ברקע)
-            let sheetSaved = false;
-            if (GOOGLE_SCRIPT_URL !== "YOUR_GOOGLE_SCRIPT_URL") {
-                try {
-                    await fetch(GOOGLE_SCRIPT_URL, {
-                        method: "POST",
-                        mode: "no-cors",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ name, phone, email, address, items: itemsText, shipping: shippingText, total, notes })
-                    });
-                    sheetSaved = true;
-                } catch (err) { console.error("Sheets Error:", err); }
-            }
+    try {
+        // שליחה אליך (בעל החנות)
+        await emailjs.send("service_5lsrr43", "template_lw08urn", {
+            to_email: "האימיילשלך@gmail.com",   // ← שנה כאן לאימייל שלך!!!
+            to_name: "מינרל סילבר",
+            customer_name: name,
+            customer_email: customerEmail,
+            customer_phone: phone,
+            customer_address: address,
+            order_items: itemsText,
+            shipping_method: shippingText,
+            total_price: total,
+            customer_notes: notes
+        });
 
+        alert(`✅ ההזמנה שלך התקבלה בהצלחה!\n\nתודה ${name}, פרטי הרכישה נשמרו ונשלחו אליך אישור.`);
+
+    } catch (err) { 
+        console.error("EmailJS Error:", err);
+        alert("ההזמנה נשמרה אבל יש בעיה בשליחת המייל. שלח לי הודעה.");
+    }
+
+    // ניקוי
+    cart = [];
+    updateNavCount();
+    e.target.reset();
+    submitBtn.innerText = "אישור ושליחת הזמנה מאובטחת";
+    submitBtn.disabled = false;
+    showView('gallery');
+}
             // 2. שליחת מייל אוטומטי דרך EmailJS (ברקע)
            try {
     await emailjs.send("service_5lsrr43", "template_lw08urn", {
