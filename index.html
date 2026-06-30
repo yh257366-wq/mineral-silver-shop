@@ -131,9 +131,7 @@
     </footer>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOn6Ufrf3IWStgGZGveD3uijXNwZmIxzWNKONxLeXNAh8HrQxC0Jvz0i0RLZwce9Y8/exec"; 
-        emailjs.init("nAdoBiRsxsAIDH8qX");
-
+     
         const products = [
             { id: 1, title: "תליון קוורץ ורוד", price: 80, sku: "017", type: "תליון", img: "./images/taliyon-kuartz-varod.jpg.png", desc: "תליון יפהפה ומיוחד עם אבן קוורץ ורודה מבריקה מלוטשת קלות. האבן עטופה באמנות בחוט ליפוף מוזהב, ויוצרת מראה יוקרתי ועדין.", material: "אבן קוורץ ורוד טבעית, חוט ליפוף נחושת מצופה זהב", size: "כ-3*2 ס\"מ" },
             { id: 2, title: "עגילי קוורץ ורוד", price: 80, sku: "008", type: "עגילים", img: "./images/earrings-kuartz.jpg.png", desc: "עגילים עדינים ומלאי חן עם אבני קוורץ ורוד טבעיות ומבריקות. הליפוף המוזהב סביב האבן מעניק להן נוכחות יוקרתית וייחודית לכל הופעה.", material: "אבני קוורץ ורוד, חוט ליפוף נחושת מצופה זהב", size: "קוטר האבן כ-1.2 ס\"מ" },
@@ -305,6 +303,9 @@
             document.getElementById('checkout-total').innerText = (subtotal + shippingVal) + " ₪";
         }
 
+        const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gqq7t5VWbag8rOBJGYiZ2JGgM-P4KnvQhRTggZoavzFE3bKiBALU4M30d/exec"; 
+        emailjs.init("nAdoBiRsxsAIDH8qX");
+
         async function handleFormSubmit(e) {
             e.preventDefault();
             if (cart.length === 0) { alert("עגלת הקניות ריקה!"); return; }
@@ -335,10 +336,8 @@
             const total = subtotal + shippingVal;
 
             let itemsHtml = `<table style="width: 100%; border-collapse: collapse; text-align: right; direction: rtl;">`;
-
             cart.forEach(i => {
                 const absoluteImgUrl = i.img.startsWith('http') ? i.img : window.location.origin + i.img.replace('.', '');
-
                 itemsHtml += `
                     <tr style="vertical-align: top; border-bottom: 1px solid #eee;">
                       <td style="padding: 15px 0 15px 10px; width: 64px;">
@@ -355,10 +354,7 @@
                     </tr>
                 `;
             });
-
             itemsHtml += `</table>`;
-
-      const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbz-IjajTbAbeA7pC4sdjQF2um_FBZFZgyvcow2Pvc6SXjP11I-pk-aJOff2f71bWLM4/exec";
 
             try {
                 // 1. שליחת מייל באמצעות EmailJS
@@ -375,7 +371,7 @@
                     customer_notes: notes
                 });
 
-                // 2. שליחת הנתונים לגוגל שיטס
+                // 2. שליחת הנתונים לגוגל שיטס בפורמט FormData (תואם לקוד החדש של גוגל)
                 const formData = new FormData();
                 formData.append("name", name);
                 formData.append("phone", phone);
@@ -399,6 +395,7 @@
                 console.error("EmailJS Error:", err);
                 alert("ההזמנה נשמרה אבל יש בעיה בשליחת המייל. שלח לי הודעה.");
             }
+
             cart = [];
             updateNavCount();
             e.target.reset();
@@ -406,7 +403,6 @@
             submitBtn.disabled = false;
             showView('gallery');
         }
-        renderGallery();
     </script>
 </body>
 </html>
