@@ -151,6 +151,8 @@
         ];
 
         let cart = [];
+const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gqq7t5VWbag8rOBJGYiZ2JGgM-P4KnvQhRTggZoavzFE3bKiBALU4M30d/exec"; 
+        emailjs.init("nAdoBiRsxsAIDH8qX");
 
         function showView(viewName) {
             document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
@@ -303,10 +305,7 @@
             document.getElementById('checkout-total').innerText = (subtotal + shippingVal) + " ₪";
         }
 
-        const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gqq7t5VWbag8rOBJGYiZ2JGgM-P4KnvQhRTggZoavzFE3bKiBALU4M30d/exec"; 
-        emailjs.init("nAdoBiRsxsAIDH8qX");
-
-        async function handleFormSubmit(e) {
+                async function handleFormSubmit(e) {
             e.preventDefault();
             if (cart.length === 0) { alert("עגלת הקניות ריקה!"); return; }
 
