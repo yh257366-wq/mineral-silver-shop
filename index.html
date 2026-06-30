@@ -358,7 +358,10 @@
 
             itemsHtml += `</table>`;
 
+      const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbz-IjajTbAbeA7pC4sdjQF2um_FBZFZgyvcow2Pvc6SXjP11I-pk-aJOff2f71bWLM4/exec";
+
             try {
+                // 1. שליחת מייל באמצעות EmailJS
                 await emailjs.send("service_5lsrr43", "template_lw08urn", {
                     to_email: "yh257366@gmail.com",
                     to_name: "מינרל סילבר",
@@ -372,12 +375,30 @@
                     customer_notes: notes
                 });
 
+                // 2. שליחת הנתונים לגוגל שיטס
+                const formData = new FormData();
+                formData.append("name", name);
+                formData.append("phone", phone);
+                formData.append("email", customerEmail);
+                formData.append("address", address);
+                formData.append("shipping", shippingText);
+                formData.append("total", total + " ₪");
+                formData.append("notes", notes);
+                
+                const itemsText = cart.map(i => `${i.title} (מידה: ${i.length}, כמות: ${i.quantity})`).join(", ");
+                formData.append("items", itemsText);
+
+                fetch(CORRECT_GOOGLE_URL, {
+                    method: "POST",
+                    body: formData,
+                    mode: "no-cors"
+                }).catch(err => console.error("Google Sheets Error:", err));
+
                 alert(`✅ ההזמנה שלך התקבלה בהצלחה!\n\nתודה ${name}, פרטי הרכישה נשמרו ונשלחו אליך אישור.`);
             } catch (err) {
                 console.error("EmailJS Error:", err);
                 alert("ההזמנה נשמרה אבל יש בעיה בשליחת המייל. שלח לי הודעה.");
             }
-
             cart = [];
             updateNavCount();
             e.target.reset();
