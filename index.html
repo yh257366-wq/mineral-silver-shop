@@ -8,21 +8,34 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; background-color: #fcfbfa; color: #1c1917; }
-        .product-card { transition: all 0.2s; }
+        .product-card { transition: all 0.2s; cursor: pointer; }
         .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px -5px rgb(0 0 0 / 0.08); }
         .view-section { display: none; }
         .view-section.active { display: block; }
+        .hidden-honey { display: none !important; }
+        .btn-animate { transition: transform 0.1s ease; }
+        .btn-animate:active { transform: scale(0.96); }
+        @media print {
+            body { background: white; color: black; }
+            nav, footer, button, .no-print { display: none !important; }
+            .view-section { display: none !important; }
+            #view-summary { display: block !important; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <nav class="fixed top-0 left-0 right-0 bg-[#fcfbfa]/95 backdrop-blur-sm border-b border-stone-200 z-50">
+    <nav class="fixed top-0 left-0 right-0 bg-[#fcfbfa]/95 backdrop-blur-sm border-b border-stone-200 z-50" aria-label="ניווט ראשי">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a class="text-2xl font-serif tracking-tight cursor-pointer" onclick="showView('gallery')">מינרל סילבר</a>
+            <a class="cursor-pointer flex items-center" onclick="showView('gallery')" aria-label="דף הבית של מינרל סילבר">
+                <img src="./images/logo.png" alt="מינרל סילבר" class="h-14 object-contain" onerror="this.outerHTML='<span class=\'text-2xl font-serif tracking-tight\'>מינרל סילבר</span>'">
+            </a>
             <div class="hidden md:flex items-center gap-8 text-sm tracking-wide">
-                <a onclick="showView('gallery')" class="cursor-pointer font-medium text-stone-900">הקולקציה</a>
+                <a onclick="showView('gallery')" class="cursor-pointer font-medium text-stone-900 hover:text-stone-600">הקולקציה</a>
+                <a onclick="showView('about')" class="cursor-pointer font-medium text-stone-900 hover:text-stone-600">אודות</a>
+                <a onclick="showView('contact')" class="cursor-pointer font-medium text-stone-900 hover:text-stone-600">צור קשר</a>
             </div>
-            <button onclick="showView('checkout')" class="flex items-center gap-2 bg-stone-950 text-white hover:bg-stone-800 px-5 py-2 rounded-full text-sm font-medium transition-colors">
+            <button onclick="showView('checkout')" class="flex items-center gap-2 bg-stone-950 text-white hover:bg-stone-800 px-5 py-2 rounded-full text-sm font-medium transition-colors btn-animate" aria-label="צפייה בעגלת הקניות">
                 <span>🛒 עגלת קניות</span>
                 <span id="nav-cart-count" class="bg-white text-stone-950 text-xs font-bold px-2 py-0.5 rounded-full">0</span>
             </button>
@@ -52,7 +65,12 @@
         </div>
 
         <div id="view-checkout" class="view-section">
-            <h1 class="text-3xl font-serif mb-8 text-stone-900 border-b border-stone-200 pb-4">קופה וסיום רכישה</h1>
+            <div class="flex justify-between items-center mb-8 border-b border-stone-200 pb-4">
+                <h1 class="text-3xl font-serif text-stone-900">קופה וסיום רכישה</h1>
+                <button onclick="showView('gallery')" class="text-sm bg-stone-100 hover:bg-stone-200 text-stone-700 px-4 py-2 rounded-xl transition-colors font-medium">
+                    ← חזרה לקולקציה
+                </button>
+            </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 <div class="lg:col-span-7 bg-white p-6 border border-stone-200 rounded-2xl h-fit">
@@ -95,64 +113,201 @@
                 <div class="lg:col-span-5 bg-stone-50 p-6 border border-stone-200 rounded-2xl">
                     <h2 class="text-xl font-serif mb-6 text-stone-900">פרטי משלוח ויצירת קשר</h2>
                     <form id="order-form" class="space-y-4" onsubmit="handleFormSubmit(event)">
+                        <div class="hidden-honey">
+                            <input type="text" id="order-honey-website" name="website" tabindex="-1" autocomplete="nope">
+                            <input type="text" id="order-honey-nickname" name="nickname" tabindex="-1" autocomplete="nope">
+                        </div>
+                        
                         <div>
                             <label class="block text-xs font-bold text-stone-600 mb-1">שם מלא *</label>
-                            <input type="text" id="form-name" required class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm">
+                            <input type="text" id="form-name" required minlength="2" maxlength="40" class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-stone-600 mb-1">מספר טלפון *</label>
-                            <input type="tel" id="form-phone" required class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm" placeholder="למשל: 0501234567">
+                            <input type="tel" id="form-phone" required pattern="05[0-9]{8}" title="אנא הזן מספר טלפון נייד תקין בן 10 ספרות המתחיל ב-05" class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm" placeholder="למשל: 0501234567">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-stone-600 mb-1">כתובת דואר אלקטרוני *</label>
                             <input type="email" id="form-email" required class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm">
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold text-stone-600 mb-1">כתובת מלאה למשלוח *</label>
-                            <input type="text" id="form-address" required class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm" placeholder="עיר, רחוב, מספר בית, מיקוד">
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-stone-600 mb-1">עיר *</label>
+                                <input type="text" id="form-city" required minlength="2" maxlength="30" class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-600 mb-1">רחוב ומספר בית *</label>
+                                <input type="text" id="form-street" required minlength="2" maxlength="50" class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm">
+                            </div>
                         </div>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-600 mb-1">מיקוד</label>
+                            <input type="text" id="form-zip" maxlength="10" class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm" placeholder="אופציונלי">
+                        </div>
+
                         <div>
                             <label class="block text-xs font-bold text-stone-600 mb-1">בקשות מיוחדות, מידות או הערות</label>
-                            <textarea id="form-notes" rows="3" class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm" placeholder="הערות להזמנה..."></textarea>
+                            <textarea id="form-notes" rows="3" maxlength="500" class="w-full border border-stone-300 p-3 rounded-xl bg-white text-sm" placeholder="הערות להזמנה..."></textarea>
                         </div>
                         
-                        <button type="submit" id="submit-btn" class="w-full bg-stone-900 hover:bg-black text-white font-medium py-4 rounded-xl text-base transition-colors shadow-md mt-4">
-                            אישור ושליחת הזמנה מאובטחת
+                        <button type="submit" id="submit-btn" class="w-full bg-stone-900 hover:bg-black text-white font-medium py-4 rounded-xl text-base transition-colors shadow-md mt-4 btn-animate">
+                            אישור ושליחת הזמנה
                         </button>
                     </form>
                 </div>
             </div>
         </div>
 
+        <div id="view-about" class="view-section">
+            <div class="max-w-2xl mx-auto bg-white p-8 md:p-12 border border-stone-200 rounded-2xl shadow-sm text-right">
+                <h1 class="text-3xl font-serif text-stone-900 mb-6 border-b border-stone-100 pb-4">אודותינו</h1>
+                <div class="text-stone-700 text-sm leading-relaxed space-y-4">
+                    <p class="font-bold text-base text-stone-900">ברוכים הבאים ל"מינרל סילבר" – יצירות אמנות ממינרלים טבעיים</p>
+                    <p>אנו מתמחים בעיצוב וייצור תכשיטים ייחודיים בעבודת יד, המשלבים אבני חן טבעיות וגבישים שנבחרו בקפידה עם מלאכת ליפוף חוטים עדינה ומדויקת.</p>
+                    <p>כל תכשיט אצלנו הוא יחיד במינו (One of a Kind) – ממש כפי שאין שתי אבנים זהות בטבע, כך לכל תליון, עגיל או סט יש את היופי, הייחודיות והנוכחות הבלעדית שלו. אנו שמים דגש רב על איכות החומרים, רמת גימור גבוהה, והתאמה אישית מלאה לטעם ולמידה שלכם, תוך מתן שירות חם ואישי לכל לקוח.</p>
+                    <p class="font-medium text-emerald-800 pt-2">מקווים שתהנו מהניצוץ של הטבע!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-contact" class="view-section">
+            <div class="max-w-xl mx-auto bg-white p-8 border border-stone-200 rounded-2xl shadow-sm">
+                <h1 class="text-2xl font-serif text-stone-900 mb-6 border-b border-stone-100 pb-4">צור קשר</h1>
+                <div class="mb-6 space-y-2 text-sm text-stone-600">
+                    <p><strong>📞 טלפון:</strong> 050-1234567</p>
+                    <p><strong>✉️ אימייל:</strong> yh257366@gmail.com</p>
+                </div>
+                <form id="contact-form" class="space-y-4" onsubmit="handleContactSubmit(event)">
+                    <div class="hidden-honey">
+                        <input type="text" id="contact-honey-website" name="website" tabindex="-1" autocomplete="nope">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">שם מלא *</label>
+                        <input type="text" id="contact-name" required minlength="2" maxlength="40" class="w-full border border-stone-300 p-3 rounded-xl text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">מספר טלפון *</label>
+                        <input type="tel" id="contact-phone" required pattern="05[0-9]{8}" title="אנא הזן מספר טלפון נייד תקין בן 10 ספרות המשתמש בקידומת 05" class="w-full border border-stone-300 p-3 rounded-xl text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">כתובת אימייל *</label>
+                        <input type="email" id="contact-email" required class="w-full border border-stone-300 p-3 rounded-xl text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">תוכן הפנייה *</label>
+                        <textarea id="contact-message" rows="4" required maxlength="1000" class="w-full border border-stone-300 p-3 rounded-xl text-sm" placeholder="איך נוכל לעזור לך?"></textarea>
+                    </div>
+                    <button type="submit" id="contact-btn" class="w-full bg-stone-900 hover:bg-black text-white font-medium py-3 rounded-xl text-sm transition-colors btn-animate">
+                        שליחת פנייה
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="view-summary" class="view-section">
+            <div class="max-w-3xl mx-auto bg-white p-8 md:p-12 border border-stone-200 rounded-2xl shadow-sm">
+                <div class="text-center mb-8 border-b border-stone-200 pb-6">
+                    <div class="text-emerald-700 text-5xl mb-3">✓</div>
+                    <h1 class="text-3xl font-serif text-stone-900 font-bold mb-2">ההזמנה נשלחה בהצלחה!</h1>
+                    <p class="text-stone-600 text-sm max-w-md mx-auto leading-relaxed">
+                        אנו ניצור איתך קשר בימים הקרובים לתשלום והשלמה סופית של הרכישה.
+                    </p>
+                    <div class="mt-4 inline-block bg-stone-100 px-4 py-1.5 rounded-full text-xs font-mono font-bold text-stone-700">
+                        מספר הזמנה: <span id="summary-order-id"></span>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h2 class="text-base font-bold text-stone-900 mb-3">פרטי המשלוח ויצירת קשר</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-stone-600 bg-stone-50 p-4 rounded-xl border border-stone-100" id="summary-customer-details">
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h2 class="text-base font-bold text-stone-900 mb-3">פירוט המוצרים שהוזמנו</h2>
+                    <div id="summary-table-container" class="border border-stone-200 rounded-xl overflow-hidden bg-white">
+                    </div>
+                </div>
+
+                <div class="flex gap-4 justify-center no-print">
+                    <button onclick="window.print()" class="bg-stone-900 hover:bg-black text-white px-6 py-3 rounded-xl text-xs font-medium transition-colors shadow-sm">
+                        🖨️ הדפסת הזמנה / שמירה כ-PDF
+                    </button>
+                    <button onclick="showView('gallery')" class="bg-emerald-800 hover:bg-emerald-900 text-white px-6 py-3 rounded-xl text-xs font-medium transition-colors shadow-sm">
+                        חזרה לחנות
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <footer class="bg-stone-900 text-stone-400 py-12 text-center text-xs">
+    <div id="cart-modal" class="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 hidden no-print" role="dialog" aria-modal="true" aria-label="הודעת הוספה לעגלה">
+        <div class="bg-white rounded-2xl max-w-sm w-full mx-4 p-6 shadow-xl border border-stone-200 text-center max-h-[90vh] overflow-y-auto">
+            <div class="text-emerald-700 text-4xl mb-2">🛍️</div>
+            <p class="text-stone-900 font-medium text-base mb-6 leading-relaxed">המוצר נוסף לעגלה!<br>לעבור לקופה לסיום הרכישה?</p>
+            <div class="flex gap-3 justify-center">
+                <button onclick="closeCartModal(); showView('checkout');" class="bg-stone-950 text-white text-xs font-medium px-5 py-3 rounded-xl hover:bg-black transition-colors flex-1 btn-animate">
+                    למעבר לעגלה
+                </button>
+                <button onclick="closeCartModal(); showView('gallery');" class="bg-stone-100 text-stone-800 text-xs font-medium px-5 py-3 rounded-xl hover:bg-stone-200 transition-colors flex-1 border border-stone-200 btn-animate">
+                    המשך בקנייה
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-stone-900 text-stone-400 py-12 text-center text-xs no-print">
+        <div class="max-w-md mx-auto mb-6 text-stone-500 border-b border-stone-800 pb-6 leading-relaxed">
+            <p class="font-bold text-stone-300 mb-1">משלוחים ואחריות</p>
+            <p>אספקה לכל חלקי הארץ. מכיוון שמדובר באבנים טבעיות וייצור ידני מותאם אישית, לא ניתן לבטל הזמנה לאחר תחילת העבודה על התכשיט. לכל שאלה אנו זמינים תמיד בשירות האישי שלנו.</p>
+        </div>
         <p>© 2026 מינרל סילבר. כל הזכויות שמורות. תכשיטים בעבודת יד.</p>
     </footer>
 
     <script>
-     
         const products = [
             { id: 1, title: "תליון קוורץ ורוד", price: 80, sku: "017", type: "תליון", img: "./images/taliyon-kuartz-varod.jpg.png", desc: "תליון יפהפה ומיוחד עם אבן קוורץ ורודה מבריקה מלוטשת קלות. האבן עטופה באמנות בחוט ליפוף מוזהב, ויוצרת מראה יוקרתי ועדין.", material: "אבן קוורץ ורוד טבעית, חוט ליפוף נחושת מצופה זהב", size: "כ-3*2 ס\"מ" },
-            { id: 2, title: "עגילי קוורץ ורוד", price: 80, sku: "008", type: "עגילים", img: "./images/earrings-kuartz.jpg.png", desc: "עגילים עדינים ומלאי חן עם אבני קוורץ ורוד טבעיות ומבריקות. הליפוף המוזהב סביב האבן מעניק להן נוכחות יוקרתית וייחודית לכל הופעה.", material: "אבני קוורץ ורוד, חוט ליפוף נחושת מצופה זהב", size: "קוטר האבן כ-1.2 ס\"מ" },
-            { id: 3, title: "עגילי חישוק - קשת הצבעים", price: 100, sku: "016", type: "עגילים", img: "./images/earrings-hishuk.jpg.png", desc: "עגילי חישוק מרהיבים המשלבים קשת צבעים ייחודית של חרוזי צ'יפס קטנים המשולבים לאורך החישוק. עיצוב צבעוני, יפהפה ומרשים.", material: "חרוזי אבני חן טבעיות מגוונות, חישוק מוזהב איכותי", size: "קוטר כ-3 ס\"מ" },
+            { id: 2, title: "עגילי קוורץ ורוד", price: 80, sku: "008", type: "עגילים", img: "./images/earrings-kuartz.jpg.png", desc: "עגילים עדינים ומלאי חן עם אבני קוורץ ורוד טבעיות ומבריקות. הליפוף המוזהב סביב האבן מעניק להן נוכחות יוקרתית וייחודית לכל הופעה.", material: "אבני קוורץ ורוד, חוט ליפוף נחושת מצופה זהב" },
+            { id: 3, title: "עגילי חישוק - קשת הצבעים", price: 100, sku: "016", type: "עגילים", img: "./images/earrings-hishuk.jpg.png", desc: "עגילי חישוק מרהיבים המשלבים קשת צבעים ייחודית של חרוזי צ'יפס קטנים המשולבים לאורך החישוק. עיצוב צבעוני, יפהפה ומרשים.", material: "חרוזי אבני חן טבעיות מגוונות, חישוק מוזהב איכותי" },
             { id: 4, title: "תליון אמטיסט סגול בוהק", price: 120, sku: "001", type: "תליון", img: "./images/taliyon-amethyst.jpg.JPG", desc: "תליון יפהפה ומיוחד עם אבן אמטיסט (אחלמה) סגולה מבריקה מלוטשת קלות. האבן עטופה באמנות בחוט ליפוף מוזהב, ויוצרת מראה יוקרתי ומיוחד.", material: "אבן אמטיסט סגולה בוהקת, חוט ליפוף נחושת מצופה זהב", size: "כ-3.5*2 ס\"מ" },
             { id: 5, title: "תליון אמטיסט סגול טבעי", price: 120, sku: "002", type: "תליון", img: "./images/taliyon-amethyst-natural.jpg.png", desc: "תליון פראי ועוצמתי המציג אבן אמטיסט בצורתה הגולמית והטבעית ביותר. מבנה הגביש הייחודי נשמר במלואו ועטוף בליפוף זהב שמדגיש את המראה הטבעי.", material: "גביש אמטיסט סגול גולמי, חוט ליפוף מצופה זהב", size: "כ-4*2.5 ס\"מ" },
             { id: 6, title: "תליון סיטרין - כסף 925", price: 150, sku: "003", type: "תליון", img: "./images/taliyon-sitrin.jpg.png", desc: "תליון יוקרתי עם אבן סיטרין בגוון צהוב-דבש חמים וקורן, המסמלת שפע ואנרגיה חיובית. התליון משולב ישירות עם שרשרת כסף 925 להשלמת המראה המלכותי.", material: "אבן סיטרין טבעית, חוט ליפוף יוקרתי, שרשרת כסף 925", size: "כ-2.8*1.8 ס\"מ" },
             { id: 7, title: "תליון סודליט כחול-לבן", price: 80, sku: "004", type: "תליון", img: "./images/taliyon-sodalite.jpg.png", desc: "תליון מרשים מאבן סודליט טבעית המציגה טקסטורות עמוקות של כחול עמוק משולב בעורקי לבן ייחודיים. כל אבן היא יצירת אמנות של הטבע בפני עצמה.", material: "אבן סודליט כחולה טבעית, חוט ליפוף נחושת מצופה זהב", size: "כ-3*2 ס\"מ" },
-            { id: 8, title: "עגילי סודליט כחול-לבן", price: 80, sku: "005", type: "עגילים", img: "./images/earrings-sodalite.jpg.png", desc: "עגילי אבן סודליט תואמים המעניקים מראה אלגנטי עם נוכחות מלכותית. השילוב בין הכחול העמוק לזהב המלפף יוצר ניגודיות מושלמת ומחמיאה.", material: "אבני סודליט כחול-לבן, חוט ליפוף נחושת מצופה זהב", size: "קוטר כ-1.5 ס\"מ" },
+            { id: 8, title: "עגילי סודליט כחול-לבן", price: 80, sku: "005", type: "עגילים", img: "./images/earrings-sodalite.jpg.png", desc: "עגילי אבן סודליט תואמים המעניקים מראה אלגנטי עם נוכחות מלכותית. השילוב בין הכחול העמוק לזהב המלפף יוצר ניגודיות מושלמת ומחמיאה.", material: "אבני סודליט כחול-לבן, חוט ליפוף נחושת מצופה זהב" },
             { id: 9, title: "סט תליון ועגילים סודליט", price: 140, sku: "600", type: "סט תכשיטים", img: "./images/set-sodalite.jpg.png", desc: "הסט המלא והמלכותי שלנו הכולל את התליון המרשים ועגילי הסודליט התואמים במחיר משתלם ומיוחד. מתנה מושלמת לעצמך או לאדם קרוב.", material: "אבני סודליט כחולות, חוט ליפוף נחושת מוזהב", size: "סט של 3 פריטים" },
-            { id: 10, title: "עגילי קבושון ורודות", price: 80, sku: "007", type: "עגילים", img: "./images/earrings-kabushon.jpg.JPG", desc: "עגילים צבעוניים ויפהפייםו עם קבושונים עגולים מבריקים בגוון ורוד-סגול עז עם דוגמת סדקים מרהיבה. הקבושונים עטופים בעדינות בחוט ליפוף מוזהב, ויוצרות מראה צבעוני ומלא חיים.", material: "אבני קבושון ורודות, חוט ליפוף נחושת מוזהב", size: "קוטר כ-1.8 ס\"מ" },
-            { id: 11, title: "עגילי קבושון ורדים", price: 80, sku: "013", type: "עגילים", img: "./images/earrings-roses.jpg.png", desc: "עגילים צבעוניים ומלאי חיים עם דוגמה מרהיבה של ורדים בתוך אבני הקבושון. מעניקים מראה פורח ומלא חיים.", material: "קבושון אקרילי מעוצב, ליפוף נחושת מצופה זהב", size: "קוטר כ-1.3 ס\"מ" },
+            { id: 10, title: "עגילי קבושון ורודות", price: 80, sku: "007", type: "עגילים", img: "./images/earrings-kabushon.jpg.JPG", desc: "עגילים צבעוניים ויפהפיים עם קבושונים עגולים מבריקים בגוון ורוד-סגול עז עם דוגמת סדקים מרהיבה. הקבושונים עטופים בעדינות בחוט ליפוף מוזהב, ויוצרות מראה צבעוני ומלא חיים.", material: "אבני קבושון ורודות, חוט ליפוף נחושת מוזהב", size: "גודל הקבושון: קוטר כ-1.8 ס\"מ<br>אורך כולל: כ-4 ס\"מ" },
+            { id: 11, title: "עגילי קבושון ורדים", price: 80, sku: "013", type: "עגילים", img: "./images/earrings-roses.jpg.png", desc: "עגילים צבעוניים ומלאי חיים עם דוגמה מרהיבה של ורדים בתוך אבני הקבושון. מעניקים מראה פורח ומלא חיים.", material: "קבושון אקרילי מעוצב, ליפוף נחושת מצופה זהב" },
             { id: 12, title: "תליון קבושון ורדים", price: 90, sku: "014", type: "תליון", img: "./images/taliyon-kabushon-vradim.jpg.png", desc: "תליון צבעוני ויפהפה עם קבושון אליפסי מבריק בעל דוגמת ורדים מרהיבה. הקבושון עטוף בעדינות בחוט ליפוף מוזהב, ויוצר מראה עדין ומלא חיים.", material: "קבושון אקרילי צבוע, חוט ליפוף נחושת מוזהב", size: "1.8*1.3 ס\"מ" },
             { id: 13, title: "סט תליון ועגילים קבושון ורדים", price: 160, sku: "601", type: "סט תכשיטים", img: "./images/set-kabushon-vradim.jpg.png", desc: "סט תליון ועגילים צבעוניים יפהפיים עם קבושונים אליפסיים מבריקים בדוגמת ורדים מרהיבה. הקבושונים עטופים בעדינות בחוט ליפוף מוזהב, למראה פורח ומלא חיים.", material: "קבושונים אקריליים מעוצבים, חוט ליפוף נחושת מוזהב", size: "תליון + זוג עגילים תואמים" },
-            { id: 14, title: "עגילי אפטיט כחול", price: 85, sku: "015", type: "עגילים", img: "./images/earrings-apatite-blue.jpg.png", desc: "עגילים מרשימים וייחודיים המשלבים אבני אפטיט (Apatite) טבעיות בגוון כחול-טורקיז עמוק ומהפנט. שילוב מושלם של טבע ואלגנטיות.", material: "אבני אפטיט כחולות טבעיות, חוט ליפוף מוזהב איכותי", size: "קוטר כ-1.4 ס\"מ" },
-            { id: 15, title: "תליון מלכיט ירוק", price: 95, sku: "018", type: "תליון", img: "./images/taliyon-malachite-green.jpg.png", desc: "תליון עוצר נשימה המציג אבן מלכיט (Malachite) ירוקה טבעית בגווני ירוק שונים המאפיינים אבן זו. נוכחות חזקה ויוקרתית.", material: "אבן מלכיט ירוקה טבעית, חוט ליפוף נחושת מוזהב", size: "כ-3.2*2.2 ס\"מ" }
+            { id: 14, title: "עגילי אפטיט כחול", price: 85, sku: "015", type: "עגילים", img: "./images/earrings-apatite-blue.jpg.png", desc: "עגילים מרשימים וייחודיים המשלבים אבני אפטיט (Apatite) טבעיות בגוון כחול-טורקיז עמוק ומהפנט. שילוב מושלם של טבע ואלגנטיות.", material: "אבני אפטיט כחולות טבעיות, חוט ליפוף מוזהב איכותי" },
+            { id: 15, title: "תליון מלכיט ירוק", price: 95, sku: "018", type: "תליון", img: "./images/taliyon-malachite-green.jpg.png", desc: "תליון עוצר נשימה המציג אבן מלכיט (Malachite) ירוקה טבעית בגווני ירוק שונים המאפיינים אבן זו. נוכחות חזקה ויוקרתית.", material: "אבן מלכיט ירוקה טבעית, חוט ליפוף נחושת מוזהב", size: "כ-3.2*2.2 ס\"מ" },
+            { id: 16, title: "תליון אפטיט כחול", price: 80, sku: "009", type: "תליון", img: "./images/taliyon-apatite.png", desc: "תליון מרשים במיוחד מאבן אפטיט כחול טבעי, בגוון יפהפה של כחול-ירוק, עטופה בעדינות בחוט מוזהב, ויוצרת שילוב צבעים מעורר השראה.", material: "אבן אפטיט כחול טבעי גולמי, חוט ליפוף נחושת מוזהב.", size: "כ- 2*2 ס\"מ" },
+            { id: 17, title: "סט תליון ועגילים אפטיט כחול", price: 140, sku: "011", type: "סט תכשיטים", img: "./images/set-apatite.png", desc: "סט תליון ועגילים מרשימים במיוחד מאבן אפטיט כחול טבעי, בגוון יפהפה של כחול-ירוק, עטופים בעדינות בחוט מוזהב, ויוצרים שילוב צבעים מעורר השראה.", material: "אבן אפטיט כחול טבעי גולמי, חוט ליפוף נחושת בציפוי זהב.", size: "גודל האבן של התליון: כ- 2*2 ס\"מ<br>גודל האבן של העגילים: כ- 1*1 ס\"מ<br>אורך כולל של העגילים: כ-3 ס\"מ" }
         ];
 
         let cart = [];
-const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gqq7t5VWbag8rOBJGYiZ2JGgM-P4KnvQhRTggZoavzFE3bKiBALU4M30d/exec"; 
+        const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gqq7t5VWbag8rOBJGYiZ2JGgM-P4KnvQhRTggZoavzFE3bKiBALU4M30d/exec"; 
         emailjs.init("nAdoBiRsxsAIDH8qX");
+
+        function saveCart() {
+            localStorage.setItem('mineral_silver_cart', JSON.stringify(cart));
+        }
+
+        function loadCart() {
+            const saved = localStorage.getItem('mineral_silver_cart');
+            if (saved) {
+                try {
+                    cart = JSON.parse(saved);
+                } catch(e) {
+                    cart = [];
+                }
+            }
+        }
+        
+        loadCart(); // טעינה מיידית בתחילת הריצה
 
         function showView(viewName) {
             document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
@@ -161,27 +316,32 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
             if (viewName === 'checkout') updateCheckoutDisplay();
         }
 
+        function openCartModal() { document.getElementById('cart-modal').classList.remove('hidden'); }
+        function closeCartModal() { document.getElementById('cart-modal').classList.add('hidden'); }
+
+        // תיקון באג ה-Double Click של גרוק: הלחיצה יושבת רק על ה-div העוטף החיצוני.
+        // הכפתור בפנים מנוטרל מפעולה עצמאית ומשמש רק לעיצוב, מה שמונע קריאות כפולות לקוד!
         function renderGallery() {
             const grid = document.getElementById('products-grid');
             grid.innerHTML = '';
             products.forEach(p => {
                 grid.innerHTML += `
-                    <div class="product-card bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col justify-between">
-                        <div class="relative bg-stone-100 aspect-[4/3] cursor-pointer" onclick="openProductPage(${p.id})">
-                            <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/400x300/eee/666?text=${encodeURIComponent(p.title)}'">
+                    <div onclick="openProductPage(${p.id})" class="product-card bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col justify-between" role="button" aria-label="צפייה במוצר ${p.title}">
+                        <div class="relative bg-stone-100 h-64">
+                            <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300/eee/666?text=${encodeURIComponent(p.title)}'">
                             <span class="absolute top-3 right-3 text-[10px] uppercase bg-white/90 px-2.5 py-1 rounded-md font-medium tracking-wider shadow-sm text-stone-700">${p.type}</span>
                         </div>
                         <div class="p-5 flex-grow flex flex-col justify-between">
                             <div>
-                                <h3 class="font-serif text-base text-stone-900 font-medium mb-1 cursor-pointer hover:text-stone-600" onclick="openProductPage(${p.id})">${p.title}</h3>
+                                <h3 class="font-serif text-base text-stone-900 font-medium mb-1">${p.title}</h3>
                                 <div class="flex justify-between items-center mt-2">
                                     <span class="text-xs text-stone-400 font-mono">מק"ט: ${p.sku}</span>
                                     <span class="font-bold text-stone-950">${p.price} ₪</span>
                                 </div>
                             </div>
-                            <button onclick="openProductPage(${p.id})" class="w-full mt-5 bg-stone-900 text-white py-3 rounded-xl text-xs font-medium hover:bg-stone-800 transition-colors tracking-wide">
+                            <div class="w-full mt-5 bg-stone-900 text-white py-3 rounded-xl text-xs font-medium text-center tracking-wide pointer-events-none">
                                 לפרטים ורכישה
-                            </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -191,6 +351,73 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
         function openProductPage(id) {
             const p = products.find(prod => prod.id === id);
             const container = document.getElementById('product-detail-container');
+            
+            // תיקון סופי ומלוטש של גרוק למניעת שבירת HTML
+            let dimensionsHtml = '';
+            if (p.size) {
+                dimensionsHtml = `<p><strong>גודל/אורך:</strong> ${p.size}</p>`;
+            } else if (p.type === "עגילים") {
+                dimensionsHtml = `<p><strong>אורך כולל:</strong> כ-3.5 ס"מ</p>`;
+            }
+
+            let lengthSelectorHtml = '';
+            if (p.type === "תליון" || p.type === "סט תכשיטים") {
+                lengthSelectorHtml = `
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1.5">בחירת אורך השרשרת:</label>
+                        <select id="detail-length" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
+                            <option value="45 ס&quot;מ">45 ס"מ (סטנדרט)</option>
+                            <option value="50 ס&quot;מ">50 ס"מ</option>
+                            <option value="55 ס&quot;מ">55 ס"מ</option>
+                            <option value="60 ס&quot;מ">60 ס"מ</option>
+                        </select>
+                    </div>
+                `;
+            }
+
+            let upgradeSectionHtml = '';
+            if (p.sku === "003") {
+                upgradeSectionHtml = `
+                    <div class="space-y-4 bg-stone-50 p-4 rounded-xl border border-stone-100">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 mb-1.5">וריאציות נוספות:</label>
+                            <select id="detail-upgrade" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
+                                <option value="0">כסף 925 (סטנדרט)</option>
+                                <option value="-70">חוט נחושת זהוב (-70 ₪)</option>
+                                <option value="20">גולדפילד איכותי (+20 ₪)</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let price925 = 70;
+                let priceGold = 90;
+                
+                if (p.type === "סט תכשיטים") {
+                    price925 = 130;
+                    priceGold = 170;
+                } else if (p.sku === "001" || p.sku === "002") {
+                    price925 = 130;
+                    priceGold = 150;
+                }
+
+                upgradeSectionHtml = `
+                    <div class="mt-4 pt-4 border-t border-stone-100">
+                        <p class="text-xs text-stone-600 mb-3 bg-stone-100 p-2.5 rounded-lg leading-relaxed">
+                            רוצים לשדרג את התכשיט? ניתן לשדרג את כל המתכות לכסף 925 או לגולדפילד איכותי
+                        </p>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 mb-1.5">שדרוג סוג המתכת</label>
+                            <select id="detail-upgrade" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
+                                <option value="0">ללא שדרוג</option>
+                                <option value="${price925}">שדרוג לכסף 925 איכותי (+${price925} ₪)</option>
+                                <option value="${priceGold}">שדרוג לגולדפילד יוקרתי (+${priceGold} ₪)</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            }
+
             container.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-6 md:p-10 border border-stone-200 rounded-2xl shadow-sm">
                     <div class="bg-stone-50 rounded-2xl overflow-hidden aspect-[4/3]">
@@ -205,31 +432,16 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
                                 <p class="text-stone-700 text-sm leading-relaxed">${p.desc}</p>
                                 <div class="text-xs text-stone-500 space-y-1">
                                     <p><strong>חומרים:</strong> ${p.material}</p>
-                                    <p><strong>גודל האבן:</strong> ${p.size}</p>
+                                    ${dimensionsHtml}
                                 </div>
                             </div>
                             <div class="space-y-4 bg-stone-50 p-4 rounded-xl border border-stone-100">
-                                <div>
-                                    <label class="block text-xs font-bold text-stone-700 mb-1.5">אורך שרשרת מבוקש:</label>
-                                    <select id="detail-length" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
-                                        <option value="45 ס&quot;מ">45 ס"מ (סטנדרט)</option>
-                                        <option value="50 ס&quot;מ">50 ס"מ</option>
-                                        <option value="55 ס&quot;מ">55 ס"מ</option>
-                                        <option value="60 ס&quot;מ">60 ס"מ</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-stone-700 mb-1.5">שדרוג סוג המתכת:</label>
-                                    <select id="detail-upgrade" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
-                                        <option value="0">ללא שדרוג</option>
-                                        <option value="70">שדרוג לכסף 925 איכותי (+70 ₪)</option>
-                                        <option value="90">שדרוג לגולדפילד יוקרתי (+90 ₪)</option>
-                                    </select>
-                                </div>
+                                ${lengthSelectorHtml}
+                                ${upgradeSectionHtml}
                             </div>
                         </div>
                         <div class="mt-8 flex gap-4">
-                            <button onclick="addToCartFromPage(${p.id})" class="flex-1 bg-stone-950 text-white font-medium py-4 rounded-xl hover:bg-black transition-colors text-center shadow-sm">
+                            <button onclick="addToCartFromPage(event, ${p.id})" class="flex-1 bg-stone-950 text-white font-medium py-4 rounded-xl hover:bg-black transition-colors text-center shadow-sm btn-animate">
                                 הוספה לעגלת הקניות
                             </button>
                         </div>
@@ -239,9 +451,12 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
             showView('product');
         }
 
-        function addToCartFromPage(id) {
+        function addToCartFromPage(event, id) {
+            if(event) event.preventDefault(); // מניעת התנהגות דיפולטיבית בדפדפנים מסוימים
             const product = products.find(p => p.id === id);
-            const length = document.getElementById('detail-length').value;
+            const lengthEl = document.getElementById('detail-length');
+            const length = lengthEl ? lengthEl.value : "לא רלוונטי";
+            
             const upgradeSelect = document.getElementById('detail-upgrade');
             const upgradeVal = parseInt(upgradeSelect.value);
             const upgradeText = upgradeSelect.options[upgradeSelect.selectedIndex].text;
@@ -253,8 +468,10 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
             } else {
                 cart.push({ ...product, cartKey: cartKey, length: length, upgradeVal: upgradeVal, upgradeText: upgradeText, quantity: 1 });
             }
+            
+            saveCart();
             updateNavCount();
-            if(confirm("🛍️ המוצר נוסף לעגלה!\nלעבור לקופה לסיום הרכישה?")) { showView('checkout'); } else { showView('gallery'); }
+            openCartModal();
         }
 
         function updateNavCount() {
@@ -270,15 +487,21 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
                 return;
             }
             container.innerHTML = cart.map(item => {
+                const lengthLine = item.length !== "לא רלוונטי" ? `מידה: ${item.length} | ` : '';
+                const unitPrice = item.price + item.upgradeVal;
+                const totalItemPrice = unitPrice * item.quantity;
                 return `
                     <div class="flex gap-4 items-center py-4 text-sm">
-                        <button onclick="removeFromCart('${item.cartKey}')" class="text-red-500 font-bold text-lg hover:text-red-700">×</button>
+                        <button onclick="removeFromCart('${item.cartKey}')" class="text-red-500 font-bold text-lg hover:text-red-700 btn-animate" aria-label="הסר את פריט זה מהעגלה">×</button>
                         <div class="flex-1">
                             <p class="font-medium text-stone-950">${item.title}</p>
-                            <p class="text-xs text-stone-500 mt-0.5">מידה: ${item.length} | ${item.upgradeText}</p>
-                            <p class="text-xs text-stone-400 mt-1">כמות: ${item.quantity} • יחידה: ${item.price + item.upgradeVal} ₪</p>
+                            <p class="text-xs text-stone-500 mt-0.5">${lengthLine}${item.upgradeText}</p>
+                            <p class="text-xs text-stone-400 mt-1">כמות: ${item.quantity} × יחידה: ${unitPrice} ₪</p>
                         </div>
-                        <span class="font-semibold text-stone-900">${(item.price + item.upgradeVal) * item.quantity} ₪</span>
+                        <div class="text-left">
+                            <span class="text-xs text-stone-400 block">סה"כ פריט:</span>
+                            <span class="font-semibold text-stone-900">${totalItemPrice} ₪</span>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -287,12 +510,18 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
 
         function removeFromCart(cartKey) {
             cart = cart.filter(item => item.cartKey !== cartKey);
+            saveCart();
             updateNavCount();
             updateCheckoutDisplay();
         }
 
         function clearCart() {
-            if (cart.length > 0 && confirm("לרוקן עגלה?")) { cart = []; updateNavCount(); updateCheckoutDisplay(); }
+            if (cart.length > 0 && confirm("האם אתה בטוח שברצונך לרוקן את עגלת הקניות?")) { 
+                cart = []; 
+                saveCart(); 
+                updateNavCount(); 
+                updateCheckoutDisplay(); 
+            }
         }
 
         function updateTotal() {
@@ -305,24 +534,66 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
             document.getElementById('checkout-total').innerText = (subtotal + shippingVal) + " ₪";
         }
 
-                async function handleFormSubmit(e) {
+        function handleContactSubmit(e) {
             e.preventDefault();
-            if (cart.length === 0) { alert("עגלת הקניות ריקה!"); return; }
+            // הגנת האבטחה המשודרגת
+            if(document.getElementById('contact-honey-website').value !== "") return;
+
+            const contactBtn = document.getElementById('contact-btn');
+            contactBtn.innerText = "שולח פנייה...";
+            contactBtn.disabled = true;
+
+            const name = document.getElementById('contact-name').value;
+            const phone = document.getElementById('contact-phone').value;
+            const email = document.getElementById('contact-email').value;
+            const msg = document.getElementById('contact-message').value;
+
+            const contactData = new FormData();
+            contactData.append("type", "פנייה כללית");
+            contactData.append("name", name);
+            contactData.append("phone", phone);
+            contactData.append("email", email);
+            contactData.append("notes", msg);
+
+            fetch(CORRECT_GOOGLE_URL, {
+                method: "POST",
+                body: contactData,
+                mode: "no-cors"
+            }).then(() => {
+                alert("תודה! פנייתך התקבלה ונציגנו יחזור אליך בהקדם.");
+                e.target.reset();
+            }).catch(err => {
+                console.error(err);
+                alert("חל שיבוש זמני בשליחת הפנייה, אנא נסה שנית בעוד מספר רגעים.");
+            }).finally(() => {
+                contactBtn.innerText = "שליחת פנייה";
+                contactBtn.disabled = false;
+            });
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            // הגנת האבטחה המשודרגת מטופס ההזמנות
+            if(document.getElementById('order-honey-website').value !== "" || document.getElementById('order-honey-nickname').value !== "") return;
+            if (cart.length === 0) { alert("עגלת הקניות שלך ריקה. אנא הוסף מוצרים לפני ביצוע הזמנה."); return; }
 
             const submitBtn = document.getElementById('submit-btn');
-            submitBtn.innerText = "מעבד הזמנה... נא לא לסגור";
+            submitBtn.innerText = "מעבד הזמנה... נא לא לסגור את העמוד";
             submitBtn.disabled = true;
 
             const name = document.getElementById('form-name').value.trim();
             const phone = document.getElementById('form-phone').value.trim();
             const customerEmail = document.getElementById('form-email').value.trim();
-            const address = document.getElementById('form-address').value.trim();
+            
+            const city = document.getElementById('form-city').value.trim();
+            const street = document.getElementById('form-street').value.trim();
+            const zip = document.getElementById('form-zip').value.trim() || "לא צוין";
+            const fullAddress = `עיר: ${city}, רחוב: ${street}, מיקוד: ${zip}`;
             const notes = document.getElementById('form-notes').value.trim() || "אין";
 
             const shippingRadios = document.getElementsByName('shipping');
             let shippingVal = 0;
             let shippingText = "איסוף עצמי (חינם)";
-            
             for (const r of shippingRadios) { 
                 if (r.checked) { 
                     shippingVal = parseInt(r.value); 
@@ -333,10 +604,12 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
             
             const subtotal = cart.reduce((sum, item) => sum + ((item.price + item.upgradeVal) * item.quantity), 0);
             const total = subtotal + shippingVal;
+            const orderId = "MS-" + Date.now().toString().slice(-6);
 
             let itemsHtml = `<table style="width: 100%; border-collapse: collapse; text-align: right; direction: rtl;">`;
             cart.forEach(i => {
                 const absoluteImgUrl = i.img.startsWith('http') ? i.img : window.location.origin + i.img.replace('.', '');
+                const optionLine = i.length !== "לא רלוונטי" ? `מידה: ${i.length} | ` : '';
                 itemsHtml += `
                     <tr style="vertical-align: top; border-bottom: 1px solid #eee;">
                       <td style="padding: 15px 0 15px 10px; width: 64px;">
@@ -344,7 +617,7 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
                       </td>
                       <td style="padding: 15px 10px; width: 100%; line-height: 1.5;">
                         <div style="font-weight: bold; color: #111;">${i.title}</div>
-                        <div style="font-size: 12px; color: #666; padding-top: 2px;">מידה: ${i.length} | שדרוג: ${i.upgradeText}</div>
+                        <div style="font-size: 12px; color: #666; padding-top: 2px;">${optionLine}שדרוג: ${i.upgradeText}</div>
                         <div style="font-size: 12px; color: #888; padding-top: 4px;">כמות: ${i.quantity}</div>
                       </td>
                       <td style="padding: 15px 0 15px 0; white-space: nowrap; text-align: left; font-weight: bold; color: #222;">
@@ -356,31 +629,31 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
             itemsHtml += `</table>`;
 
             try {
-                // 1. שליחת מייל באמצעות EmailJS
                 await emailjs.send("service_5lsrr43", "template_lw08urn", {
                     to_email: "yh257366@gmail.com",
                     to_name: "מינרל סילבר",
                     customer_name: name,
                     customer_email: customerEmail,
                     customer_phone: phone,
-                    customer_address: address,
+                    customer_address: fullAddress,
                     order_items: itemsHtml, 
                     shipping_method: shippingText,
                     total_price: total + " ₪",
-                    customer_notes: notes
+                    customer_notes: notes,
+                    order_id: orderId
                 });
 
-                // 2. שליחת הנתונים לגוגל שיטס בפורמט FormData (תואם לקוד החדש של גוגל)
                 const formData = new FormData();
+                formData.append("order_id", orderId);
                 formData.append("name", name);
                 formData.append("phone", phone);
                 formData.append("email", customerEmail);
-                formData.append("address", address);
+                formData.append("address", fullAddress);
                 formData.append("shipping", shippingText);
                 formData.append("total", total + " ₪");
                 formData.append("notes", notes);
                 
-                const itemsText = cart.map(i => `${i.title} (מידה: ${i.length}, כמות: ${i.quantity})`).join(", ");
+                const itemsText = cart.map(i => `${i.title} (בחירה: ${i.length}, כמות: ${i.quantity})`).join(", ");
                 formData.append("items", itemsText);
 
                 fetch(CORRECT_GOOGLE_URL, {
@@ -389,21 +662,36 @@ const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwOAgmfX61Gq
                     mode: "no-cors"
                 }).catch(err => console.error("Google Sheets Error:", err));
 
-                alert(`✅ ההזמנה שלך התקבלה בהצלחה!\n\nתודה ${name}, פרטי הרכישה נשמרו ונשלחו אליך אישור.`);
+                document.getElementById('summary-order-id').innerText = orderId;
+                document.getElementById('summary-customer-details').innerHTML = `
+                    <div><strong>שם מלא:</strong> ${name}</div>
+                    <div><strong>טלפון:</strong> ${phone}</div>
+                    <div><strong>אימייל:</strong> ${customerEmail}</div>
+                    <div><strong>כתובת:</strong> ${fullAddress}</div>
+                    <div class="md:col-span-2"><strong>אופן משלוח:</strong> ${shippingText}</div>
+                    <div class="md:col-span-2"><strong>הערות ובקשות:</strong> ${notes}</div>
+                    <div class="md:col-span-2 text-sm font-bold text-stone-900 mt-2 pt-2 border-t border-stone-200 flex justify-between"><span>לתשלום סופי:</span><span class="text-emerald-800">${total} ₪</span></div>
+                `;
+                
+                document.getElementById('summary-table-container').innerHTML = itemsHtml;
+                
+                cart = [];
+                localStorage.removeItem('mineral_silver_cart');
+                updateNavCount();
+                e.target.reset();
+                showView('summary');
+
             } catch (err) {
                 console.error("EmailJS Error:", err);
-                alert("ההזמנה נשמרה אבל יש בעיה בשליחת המייל. שלח לי הודעה.");
+                alert("חל שיבוש זמני בשליחת הודעת האישור האוטומטית, אך אל דאגה – פרטי ההזמנה שלך שמורים אצלנו וניצור עמך קשר בהקדם.");
+            } finally {
+                submitBtn.innerText = "אישור ושליחת הזמנה";
+                submitBtn.disabled = false;
             }
-
-            cart = [];
-            updateNavCount();
-            e.target.reset();
-            submitBtn.innerText = "אישור ושליחת הזמנה מאובטחת";
-            submitBtn.disabled = false;
-            showView('gallery');
         }
         
-        // הפעלת האתר והצגת המוצרים בטעינה הראשונית
+        // הפעלה ראשונית של המערכת
+        updateNavCount();
         renderGallery();
     </script>
 </body>
