@@ -322,19 +322,34 @@
             const address = document.getElementById('form-address').value.trim();
             const notes = document.getElementById('form-notes').value.trim() || "אין";
 
-            let shippingText = "";
-            const shippingRadios = document.getElementsByName('shipping');
-            for (const r of shippingRadios) {
-                if (r.checked) {
-                    shippingText = r.nextSibling.textContent.trim();
-                    break;
-                }
-            }
-            const total = document.getElementById('checkout-total').innerText;
+          // בניית טבלת המוצרים בתוך משתנה HTML שיוזרק ישירות לתבנית
+            let itemsHtml = `<table style="width: 100%; border-collapse: collapse; text-align: right; direction: rtl;">`;
 
-            let itemsText = cart.map(i => `${i.title} (כמות: ${i.quantity}, אורך: ${i.length}, שדרוג: ${i.upgradeText})`).join(' | ');
+            cart.forEach(i => {
+                // יצירת קישור מוחלט לתמונה כדי שתוצג בתוך ה-Gmail של המוכר
+                const absoluteImgUrl = i.img.startsWith('http') ? i.img : window.location.origin + i.img.replace('.', '');
+
+                itemsHtml += `
+                    <tr style="vertical-align: top; border-bottom: 1px solid #eee;">
+                      <td style="padding: 15px 0 15px 10px; width: 64px;">
+                        <img style="height: 64px; width: 64px; object-fit: cover; border-radius: 6px;" height="64px" width="64px" src="${absoluteImgUrl}" alt="item" onerror="this.src='https://via.placeholder.com/64?text=%3F'">
+                      </td>
+                      <td style="padding: 15px 10px; width: 100%; line-height: 1.5;">
+                        <div style="font-weight: bold; color: #111;">${i.title}</div>
+                        <div style="font-size: 12px; color: #666; padding-top: 2px;">מידה: ${i.length} | שדרוג: ${i.upgradeText}</div>
+                        <div style="font-size: 12px; color: #888; padding-top: 4px;">כמות: ${i.quantity}</div>
+                      </td>
+                      <td style="padding: 15px 0 15px 0; white-space: nowrap; text-align: left; font-weight: bold; color: #222;">
+                        ${(i.price + i.upgradeVal) * i.quantity} ₪
+                      </td>
+                    </tr>
+                `;
+            });
+
+            itemsHtml += `</table>`;
 
             try {
+                // שליחת הנתונים המעודכנים ל-EmailJS
                 await emailjs.send("service_5lsrr43", "template_lw08urn", {
                     to_email: "yh257366@gmail.com",
                     to_name: "מינרל סילבר",
@@ -342,14 +357,13 @@
                     customer_email: customerEmail,
                     customer_phone: phone,
                     customer_address: address,
-                    order_items: itemsText,
+                    order_items: itemsHtml, // כאן מוזרק קוד ה-HTML של הטבלה לתוך ה-{{{order_items}}}
                     shipping_method: shippingText,
                     total_price: total,
                     customer_notes: notes
                 });
 
                 alert(`✅ ההזמנה שלך התקבלה בהצלחה!\n\nתודה ${name}, פרטי הרכישה נשמרו ונשלחו אליך אישור.`);
-
             } catch (err) {
                 console.error("EmailJS Error:", err);
                 alert("ההזמנה נשמרה אבל יש בעיה בשליחת המייל. שלח לי הודעה.");
