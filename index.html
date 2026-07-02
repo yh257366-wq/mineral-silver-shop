@@ -29,6 +29,36 @@
             main { pt: 10px !important; pb: 10px !important; }
             .border { border-color: #ccc !important; }
         }
+        /* פתרון מוחלט לרעידות והבהובים בדף סיכום ההזמנה */
+#view-summary, #view-summary * {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    will-change: auto !important;
+}
+#view-summary .product-card, 
+#view-summary .product-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+/* התאמת הדפסה טבעית - מציג את כותרת ההדפסה הייעודית רק בעת הדפסה ומעלים אלמנטים מיותרים */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #view-summary, #view-summary .max-w-3xl, #view-summary .max-w-3xl * {
+        visibility: visible;
+    }
+    #view-summary {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+    .no-print {
+        display: none !important;
+    }
+}
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
