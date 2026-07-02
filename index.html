@@ -18,20 +18,47 @@
         .btn-animate:active { transform: scale(0.96); }
         
         /* ביטול מוחלט של אנימציות ורעידות בדף הסיכום */
-        #view-summary, #view-summary * { 
-            animation: none !important; 
-            transition: none !important; 
-            transform: none !important; 
-            will-change: auto !important;
-        }
+        #view-summary * { animation: none !important; transition: none !important; transform: none !important; }
 
-        /* הגדרות הדפסה נקיות לחלוטין */
+        /* הגדרות הדפסה / שמירה ל-PDF נקיות לחלוטין */
         @media print {
-            body * { visibility: hidden; }
-            #view-summary, #view-summary .max-w-3xl, #view-summary .max-w-3xl * { visibility: visible; }
-            #view-summary { position: absolute; left: 0; top: 0; width: 100%; }
-            .no-print { display: none !important; }
+            body { background: white; color: black; min-height: auto; }
+            nav, footer, button, .no-print, .btn-animate { display: none !important; }
+            .view-section { display: none !important; }
+            #view-summary { display: block !important; pt: 0 !important; }
+            main { pt: 10px !important; pb: 10px !important; }
+            .border { border-color: #ccc !important; }
         }
+        /* פתרון מוחלט לרעידות והבהובים בדף סיכום ההזמנה */
+#view-summary, #view-summary * {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    will-change: auto !important;
+}
+#view-summary .product-card, 
+#view-summary .product-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+/* התאמת הדפסה טבעית - מציג את כותרת ההדפסה הייעודית רק בעת הדפסה ומעלים אלמנטים מיותרים */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #view-summary, #view-summary .max-w-3xl, #view-summary .max-w-3xl * {
+        visibility: visible;
+    }
+    #view-summary {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+    .no-print {
+        display: none !important;
+    }
+}
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -39,7 +66,7 @@
     <nav class="fixed top-0 left-0 right-0 bg-[#fcfbfa]/95 backdrop-blur-sm border-b border-stone-200 z-50 no-print" aria-label="ניווט ראשי">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <a class="cursor-pointer flex items-center" onclick="showView('gallery')" aria-label="דף הבית של מינרל גולד">
-                <span class='text-2xl font-serif tracking-tight font-bold'>מינרל גולד</span>
+                <img src="./images/logo.png" alt="תכשיטי מינרל גולד" class="h-14 object-contain" onerror="this.outerHTML='<span class=\'text-2xl font-serif tracking-tight font-bold\'>מינרל גולד</span>'">
             </a>
             <div class="hidden md:flex items-center gap-8 text-sm tracking-wide">
                 <a onclick="showView('gallery')" class="cursor-pointer font-medium text-stone-900 hover:text-stone-600">הקולקציה</a>
@@ -170,7 +197,13 @@
                 <h1 class="text-3xl font-serif text-stone-900 mb-6 border-b border-stone-100 pb-4">אודותינו</h1>
                 <div class="text-stone-700 text-sm leading-relaxed space-y-6">
                     <p class="font-bold text-base text-stone-900">ברוכים הבאים ל"תכשיטי מינרל גולד" – יצירות אמנות ממינרלים טבעיים</p>
-                    <p>אנו מתמחים בעיצוב וייצור תכשיטים ייחודיים בעבודת יד, המשלבים אבני חן טבעיות וגבישים שנבחרו בקפידה.</p>
+                    <p>אנו מתמחים בעיצוב וייצור תכשיטים ייחודיים בעבודת יד, המשלבים אבני חן טבעיות וגבישים שנבחרו בקפידה עם מלאכת ליפוף חוטים עדינה ומדויקת.</p>
+                    
+                    <div class="my-6 rounded-2xl overflow-hidden border border-stone-200 shadow-xs">
+                        <img src="./images/Gemini_Generated_Image_4qyaeq4qyaeq4qya (2).png" alt="קולקציית מינרל גולד" class="w-full h-auto object-cover">
+                    </div>
+
+                    <p>כל תכשיט אצלנו הוא יחיד במינו (One of a Kind) – ממש כפי שאין שתי אבנים זהות בטבע, כך לכל תליון, עגיל או סט יש את היופי, הייחודיות והנוכחות הבלעדית שלו. אנו שמים דגש רב על איכות החומרים, רמת גימור גבוהה, והתאמה אישית מלאה לטעם ולמידה שלכם, תוך מתן שירות חם ואישי לכל לקוח.</p>
                     <p class="font-medium text-emerald-800 pt-2">מקווים שתהנו מהניצוץ של הטבע!</p>
                 </div>
             </div>
@@ -250,10 +283,10 @@
 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center no-print">
                     <button onclick="triggerPdfSave()" class="bg-stone-900 hover:bg-black text-white px-6 py-3 rounded-xl text-xs font-medium transition-colors shadow-sm flex-1 sm:flex-none btn-animate">
-                        💾 שמירה והורדת PDF
+                        💾 שמירה והורדת PDF ישירה
                     </button>
                     <button onclick="triggerPrintWithHeader()" class="bg-stone-600 hover:bg-stone-700 text-white px-6 py-3 rounded-xl text-xs font-medium transition-colors shadow-sm flex-1 sm:flex-none btn-animate">
-                        🖨️ הדפסה
+                        🖨 Well הדפסה רגילה
                     </button>
                     <button onclick="showView('gallery')" class="bg-emerald-800 hover:bg-emerald-900 text-white px-6 py-3 rounded-xl text-xs font-medium transition-colors shadow-sm flex-1 sm:flex-none btn-animate">
                         חזרה לחנות
@@ -280,11 +313,15 @@
     </div>
 
     <footer class="bg-stone-900 text-stone-400 py-12 text-center text-xs no-print">
+        <div class="max-w-md mx-auto mb-6 text-stone-500 border-b border-stone-800 pb-6 leading-relaxed">
+            <p class="font-bold text-stone-300 mb-1">משלוחים ואחריות</p>
+            <p>אספקה לכל חלקי הארץ. מכיוון שמדובר באבנים טבעיות וייצור ידני מותאם אישית, לא ניתן לבטל הזמנה לאחר תחילת העבודה על התכשיט. לכל שאלה אנו זמינים תמיד בשירות האישי שלנו.</p>
+        </div>
         <p>© 2026 תכשיטי מינרל גולד. כל הזכויות שמורות. תכשיטים בעבודת יד.</p>
     </footer>
 
     <script>
-        // בסיס הנתונים המלא עם כל 17 המוצרים ללא קיצורים
+        // בסיס הנתונים המלא והמפורט
         const products = [
             { id: 1, title: "תליון קוורץ ורוד", price: 80, sku: "009", type: "תליון", img: "./images/taliyon-kuartz-varod.jpg.png", desc: "תליון יפהפה ומיוחד עם אבן קוורץ ורודה מבריקה מלוטשת קלות. האבן עטופה באמנות בחוט ליפוף מוזהב, ויוצרת מראה יוקרתי ועדין.", material: "אבן קוורץ ורוד טבעית, חוט ליפוף נחושת מוזהב", size: "כ-2 ס\"מ" },
             { id: 2, title: "עגילי קוורץ ורוד", price: 80, sku: "008", type: "עגילים", img: "./images/earrings-kuartz.jpg.png", desc: "עגילים עדינים ומלאי חן עם אבני קוורץ ורוד טבעיות ומבריקות. הליפוף המוזהב סביב האבן מעניק להן נוכחות יוקרתית וייחודית לכל הופעה.", material: "אבני קוורץ ורוד, חוט ליפוף נחושת מצופה זהב", stoneSize: "כ-1*1 ס\"מ", totalLength: "כ-3.5 ס\"מ" },
@@ -315,13 +352,20 @@
             if (saved) { try { cart = JSON.parse(saved); } catch(e) { cart = []; } }
         }
         loadCart();
-
-        function showView(viewName) {
+function showView(viewName) {
             document.querySelectorAll('.view-section').forEach(section => {
                 section.classList.remove('active');
+                section.style.transform = 'none'; 
             });
+            
             const targetView = document.getElementById(`view-${viewName}`);
             targetView.classList.add('active');
+            
+            if (viewName === 'summary') {
+                targetView.style.contain = 'content';
+                targetView.querySelectorAll('.btn-animate').forEach(el => el.classList.remove('btn-animate'));
+            }
+
             window.scrollTo(0, 0);
             if (viewName === 'checkout') updateCheckoutDisplay();
         }
@@ -334,17 +378,22 @@
             grid.innerHTML = '';
             products.forEach(p => {
                 grid.innerHTML += `
-                    <div onclick="openProductPage(${p.id})" class="product-card bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col justify-between">
+                    <div onclick="openProductPage(${p.id})" class="product-card bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col justify-between" role="button" aria-label="צפייה במוצר ${p.title}">
                         <div class="relative bg-stone-100 h-64">
-                            <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
+                            <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300/eee/666?text=${encodeURIComponent(p.title)}'">
+                            <span class="absolute top-3 right-3 text-[10px] uppercase bg-white/90 px-2.5 py-1 rounded-md font-medium tracking-wider shadow-sm text-stone-700">${p.type}</span>
                         </div>
                         <div class="p-5 flex-grow flex flex-col justify-between">
-                            <h3 class="font-serif text-base text-stone-900 font-medium mb-1">${p.title}</h3>
-                            <div class="flex justify-between items-center mt-2">
-                                <span class="text-xs text-stone-400 font-mono">מק"ט: ${p.sku}</span>
-                                <span class="font-bold text-stone-950">${p.price} ₪</span>
+                            <div>
+                                <h3 class="font-serif text-base text-stone-900 font-medium mb-1">${p.title}</h3>
+                                <div class="flex justify-between items-center mt-2">
+                                    <span class="text-xs text-stone-400 font-mono">מק"ט: ${p.sku}</span>
+                                    <span class="font-bold text-stone-950">${p.price} ₪</span>
+                                </div>
                             </div>
-                            <div class="w-full mt-5 bg-stone-900 text-white py-3 rounded-xl text-xs font-medium text-center">לפרטים ורכישה</div>
+                            <div class="w-full mt-5 bg-stone-900 text-white py-3 rounded-xl text-xs font-medium text-center tracking-wide pointer-events-none">
+                                לפרטים ורכישה
+                            </div>
                         </div>
                     </div>
                 `;
@@ -354,16 +403,111 @@
         function openProductPage(id) {
             const p = products.find(prod => prod.id === id);
             const container = document.getElementById('product-detail-container');
+            
+            let dimensionsHtml = '';
+            if (p.type === "עגילים") {
+                let sizeLabel = "גודל האבן";
+                if (["007", "013", "014", "601"].includes(p.sku)) {
+                    sizeLabel = "גודל הקבושון";
+                } else if (p.sku === "016") {
+                    sizeLabel = "קוטר החישוק";
+                }
+
+                dimensionsHtml = `
+                    <p><strong>${sizeLabel}:</strong> ${p.stoneSize || "כ-1.2*1.2 ס\"מ"}</p>
+                    <p><strong>אורך כולל של העגיל:</strong> ${p.totalLength || "כ-3.5 ס\"מ"}</p>
+                `;
+            } else if (p.size) {
+                dimensionsHtml = `<p><strong>גודל/מידה:</strong> ${p.size}</p>`;
+            }
+
+            let lengthSelectorHtml = '';
+            if (p.type === "תליון" || p.type === "סט תכשיטים") {
+                lengthSelectorHtml = `
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1.5">בחירת אורך השרשרת:</label>
+                        <select id="detail-length" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
+                            <option value="45 ס&quot;מ">45 ס"מ (סטנדרט)</option>
+                            <option value="50 ס&quot;מ">50 ס"מ</option>
+                            <option value="55 ס&quot;מ">55 ס"מ</option>
+                            <option value="60 ס&quot;מ">60 ס"מ</option>
+                        </select>
+                    </div>
+                `;
+            }
+
+            let upgradeSectionHtml = '';
+            if (p.sku === "003") {
+                upgradeSectionHtml = `
+                    <div class="space-y-4 bg-stone-50 p-4 rounded-xl border border-stone-100">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 mb-1.5">וריאציות נוספות:</label>
+                            <select id="detail-upgrade" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
+                                <option value="0">כסף 925 (סטנדרט)</option>
+                                <option value="-70">חוט נחושת זהוב (-70 ₪)</option>
+                                <option value="20">גולדפילד איכותי (+20 ₪)</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let price925 = 70;
+                let priceGold = 90;
+                
+                if (p.type === "סט תכשיטים") {
+                    price925 = 130;
+                    priceGold = 170;
+                } else if (p.sku === "001" || p.sku === "002") {
+                    price925 = 130;
+                    priceGold = 150;
+                }
+
+                upgradeSectionHtml = `
+                    <div class="mt-4 pt-4 border-t border-stone-200">
+                        <p class="text-sm font-extrabold text-amber-900 mb-3 bg-amber-50 p-3.5 rounded-xl border border-amber-200 leading-relaxed text-center">
+                            ✨ רוצים לשדרג את התכשיט? ניתן לשדרג את כל המתכות לכסף 925 או לגולדפילד איכותי! ✨
+                        </p>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 mb-1.5">שדרוג סוג המתכת</label>
+                            <select id="detail-upgrade" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
+                                <option value="0">ללא שדרוג (בסיס)</option>
+                                <option value="${price925}">שדרוג לכסף 925 איכותי (+${price925} ₪)</option>
+                                <option value="${priceGold}">שדרוג לגולדפילד יוקרתי (+${priceGold} ₪)</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const imgClass = (p.sku === "001") ? "w-full h-full object-contain bg-stone-900" : "w-full h-full object-cover";
+
             container.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-6 md:p-10 border border-stone-200 rounded-2xl shadow-sm">
                     <div class="bg-stone-50 rounded-2xl overflow-hidden aspect-[4/3] flex items-center justify-center">
-                        <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/600x450?text=No+Image'">
+                        <img src="${p.img}" alt="${p.title}" class="${imgClass}" onerror="this.src='https://via.placeholder.com/600x450/eee/666?text=${encodeURIComponent(p.title)}'">
                     </div>
-                    <div>
-                        <h2 class="text-3xl font-serif text-stone-900 mb-4">${p.title}</h2>
-                        <p class="text-2xl font-bold text-emerald-800 mb-6">${p.price} ₪</p>
-                        <p class="text-stone-700 text-sm leading-relaxed mb-4">${p.desc}</p>
-                        <button onclick="addToCartFromPage(event, ${p.id})" class="bg-stone-950 text-white font-medium px-8 py-4 rounded-xl">הוספה לעגלת הקניות</button>
+                    <div class="flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-stone-400 uppercase tracking-widest">${p.type} • מק"ט ${p.sku}</span>
+                            <h2 class="text-3xl font-serif text-stone-900 mt-1 mb-4">${p.title}</h2>
+                            <p class="text-2xl font-bold text-emerald-800 mb-6">${p.price} ₪</p>
+                            <div class="space-y-4 border-t border-b border-stone-100 py-6 mb-6">
+                                <p class="text-stone-700 text-sm leading-relaxed">${p.desc}</p>
+                                <div class="text-xs text-stone-500 space-y-1">
+                                    <p><strong>חומרים:</strong> ${p.material}</p>
+                                    ${dimensionsHtml}
+                                </div>
+                            </div>
+                            <div class="space-y-4 bg-stone-50 p-4 rounded-xl border border-stone-100">
+                                ${lengthSelectorHtml}
+                                ${upgradeSectionHtml}
+                            </div>
+                        </div>
+                        <div class="mt-8 flex gap-4">
+                            <button onclick="addToCartFromPage(event, ${p.id})" class="flex-1 bg-stone-950 text-white font-medium py-4 rounded-xl hover:bg-black transition-colors text-center shadow-sm">
+                                הוספה לעגלת הקניות
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -373,7 +517,24 @@
         function addToCartFromPage(event, id) {
             if(event) event.preventDefault();
             const product = products.find(p => p.id === id);
-            cart.push({ ...product, rowId: Date.now(), length: "לא רלוונטי", upgradeVal: 0, upgradeText: "בסיס", quantity: 1 });
+            const lengthEl = document.getElementById('detail-length');
+            const length = lengthEl ? lengthEl.value : "לא רלוונטי";
+            
+            const upgradeSelect = document.getElementById('detail-upgrade');
+            const upgradeVal = parseInt(upgradeSelect.value);
+            const upgradeText = upgradeSelect.options[upgradeSelect.selectedIndex].text;
+            
+            const rowId = Date.now() + Math.floor(Math.random() * 1000);
+
+            cart.push({ 
+                ...product, 
+                rowId: rowId, 
+                length: length, 
+                upgradeVal: upgradeVal, 
+                upgradeText: upgradeText, 
+                quantity: 1 
+            });
+            
             saveCart();
             updateNavCount();
             openCartModal();
@@ -387,108 +548,263 @@
             const container = document.getElementById('checkout-cart-items');
             if (cart.length === 0) {
                 container.innerHTML = `<p class="text-stone-400 text-center py-12 text-sm">עגלת הקניות ריקה.</p>`;
+                document.getElementById('checkout-subtotal').innerText = "0 ₪";
+                document.getElementById('checkout-total').innerText = "0 ₪";
                 return;
             }
-            container.innerHTML = cart.map(item => `
-                <div class="flex gap-4 items-center py-4 text-sm">
-                    <img src="${item.img}" class="w-12 h-12 object-cover rounded-lg" onerror="this.src='https://via.placeholder.com/50'">
-                    <div class="flex-1"><p class="font-medium">${item.title}</p></div>
-                    <div><span>${item.price} ₪</span></div>
-                </div>
-            `).join('');
+            
+            container.innerHTML = cart.map(item => {
+                const lengthLine = item.length !== "לא רלוונטי" ? `אורך שרשרת: ${item.length} | ` : '';
+                const unitPrice = item.price + item.upgradeVal;
+                const totalItemPrice = unitPrice * item.quantity;
+                
+                return `
+                    <div class="flex gap-4 items-center py-4 text-sm">
+                        <button onclick="removeFromCart(${item.rowId})" class="text-red-500 font-bold text-xl hover:text-red-700 px-2" title="הסר פריט זה">×</button>
+                        <img src="${item.img}" alt="${item.title}" class="w-12 h-12 object-cover rounded-lg border border-stone-200" onerror="this.src='https://via.placeholder.com/50'">
+                        <div class="flex-1">
+                            <p class="font-medium text-stone-950">${item.title}</p>
+                            <p class="text-xs text-stone-500 mt-0.5">${lengthLine}${item.upgradeText}</p>
+                            <p class="text-xs text-stone-400 mt-1">כמות: ${item.quantity} × מחיר: ${unitPrice} ₪</p>
+                        </div>
+                        <div class="text-left">
+                            <span class="text-xs text-stone-400 block">סה"כ פריט:</span>
+                            <span class="font-semibold text-stone-900">${totalItemPrice} ₪</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
             updateTotal();
         }
 
-        function clearCart() { cart = []; saveCart(); updateNavCount(); updateCheckoutDisplay(); }
-        function updateTotal() {
-            const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
-            document.getElementById('checkout-subtotal').innerText = subtotal + " ₪";
-            const shipping = parseInt(document.getElementById('shipping-selector').value || 0);
-            document.getElementById('checkout-total').innerText = (subtotal + shipping) + " ₪";
+        function removeFromCart(rowId) {
+            cart = cart.filter(item => item.rowId !== rowId);
+            saveCart();
+            updateNavCount();
+            updateCheckoutDisplay();
         }
 
+        function clearCart() {
+            if (cart.length > 0 && confirm("האם אתה בטוח שברצונך לרוקן את עגלת הקניות?")) { 
+                cart = []; 
+                saveCart(); 
+                updateNavCount(); 
+                updateCheckoutDisplay(); 
+            }
+        }
+
+        function updateTotal() {
+            if (cart.length === 0) return;
+            const subtotal = cart.reduce((sum, item) => sum + ((item.price + item.upgradeVal) * item.quantity), 0);
+            document.getElementById('checkout-subtotal').innerText = subtotal + " ₪";
+            
+            const shippingSelector = document.getElementById('shipping-selector');
+            const shippingVal = shippingSelector.value !== "" ? parseInt(shippingSelector.value) : 0;
+            
+            document.getElementById('checkout-total').innerText = (subtotal + shippingVal) + " ₪";
+        }
+
+        // תיקון אגרסיבי והבטחת טעינת רכיב ה-PDF בזמן אמת מתוך הפונקציה
         async function triggerPdfSave() {
-            const element = document.querySelector('#view-summary');
+            const element = document.querySelector('#view-summary .max-w-3xl');
             const orderId = document.getElementById('summary-order-id').innerText;
-            const opt = { margin: [10, 10, 10, 10], filename: `order-${orderId}.pdf`, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            
+            if (typeof html2pdf === 'undefined') {
+                const btn = document.querySelector('button[onclick="triggerPdfSave()"]');
+                const originalText = btn.innerText;
+                btn.innerText = "טוען רכיב PDF...";
+                
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+                btn.innerText = originalText;
+            }
+
+            const opt = {
+                margin:       [10, 10, 10, 10],
+                filename:     `order-${orderId}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, logging: false, letterRendering: true }, 
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
             html2pdf().set(opt).from(element).save();
         }
 
-        function triggerPrintWithHeader() { window.print(); }
+        // הפעלת חלונית הדפסה נקייה המנוהלת באמצעות ה-CSS Print Media Query
+        function triggerPrintWithHeader() {
+            window.print();
+        }
 
         function handleContactSubmit(e) {
             e.preventDefault();
-            alert("פנייתך התקבלה!");
+            if(document.getElementById('contact-honey-website').value !== "") return;
+
+            const contactBtn = document.getElementById('contact-btn');
+            contactBtn.innerText = "שולח פנייה...";
+            contactBtn.disabled = true;
+
+            const name = document.getElementById('contact-name').value;
+            const phone = document.getElementById('contact-phone').value;
+            const email = document.getElementById('contact-email').value;
+            const msg = document.getElementById('contact-message').value;
+
+            const contactData = new FormData();
+            contactData.append("type", "פנייה כללית");
+            contactData.append("name", name);
+            contactData.append("phone", phone);
+            contactData.append("email", email);
+            contactData.append("notes", msg);
+
+            fetch(CORRECT_GOOGLE_URL, {
+                method: "POST",
+                body: contactData,
+                mode: "no-cors"
+            }).then(() => {
+                alert("תודה! פנייתך התקבלה ונציגנו יחזור אליך בהקדם.");
+                e.target.reset();
+            }).catch(err => {
+                console.error(err);
+                alert("חל שיבוש זמני בשליחת הפנייה, אנא נסה שנית בעוד מספר רגעים.");
+            }).finally(() => {
+                contactBtn.innerText = "שליחת פנייה";
+                contactBtn.disabled = false;
+            });
         }
 
         async function handleFormSubmit(e) {
             e.preventDefault();
+            if(document.getElementById('order-honey-website').value !== "" || document.getElementById('order-honey-nickname').value !== "") return;
+            
+            const shippingSelector = document.getElementById('shipping-selector');
+            if (shippingSelector.value === "") {
+                alert("אנא בחר שיטת משלוח מהרשימה כדי להמשיך ברכישה.");
+                shippingSelector.focus();
+                return;
+            }
+            
+            if (cart.length === 0) { alert("עגלת הקניות שלך ריקה. אנא הוסף מוצרים לפני ביצוע הזמנה."); return; }
+
             const submitBtn = document.getElementById('submit-btn');
+            submitBtn.innerText = "מעבד הזמנה... נא לא לסגור את העמוד";
             submitBtn.disabled = true;
 
-            const name = document.getElementById('form-name').value;
-            const customerEmail = document.getElementById('form-email').value;
-            const phone = document.getElementById('form-phone').value;
-            const shippingText = document.getElementById('shipping-selector').options[document.getElementById('shipping-selector').selectedIndex].text;
-            const orderId = "MG-" + Date.now().toString().slice(-6);
-            const total = document.getElementById('checkout-total').innerText;
+            const name = document.getElementById('form-name').value.trim();
+            const phone = document.getElementById('form-phone').value.trim();
+            const customerEmail = document.getElementById('form-email').value.trim();
+            
+            const city = document.getElementById('form-city').value.trim();
+            const street = document.getElementById('form-street').value.trim();
+            const zip = document.getElementById('form-zip').value.trim() || "לא צוין";
+            const fullAddress = `עיר: ${city}, רחוב: ${street}, מיקוד: ${zip}`;
+            const notes = document.getElementById('form-notes').value.trim() || "אין";
 
-            let itemsHtml = `<table style="width:100%; border-collapse:collapse; direction:rtl; text-align:right;">`;
+            const shippingVal = parseInt(shippingSelector.value);
+            const shippingText = shippingSelector.options[shippingSelector.selectedIndex].text;
+            
+            const subtotal = cart.reduce((sum, item) => sum + ((item.price + item.upgradeVal) * item.quantity), 0);
+            const total = subtotal + shippingVal;
+            const orderId = "MG-" + Date.now().toString().slice(-6);
+
+            // בניית טבלת פריטים עם ניקוי מוחלט לנתיבי תמונות מקומיים ויחסיים (למשל ./images) עבור תוכנות המייל
+            let itemsHtml = `<table style="width: 100%; border-collapse: collapse; text-align: right; direction: rtl; margin-bottom: 20px;">`;
             cart.forEach(i => {
-                let absoluteImgUrl = i.img.startsWith('http') ? i.img : `${window.location.origin}/${i.img.replace(/^(\.\/|\/)+/, '')}`;
+                let absoluteImgUrl = i.img;
+                if (!absoluteImgUrl.startsWith('http://') && !absoluteImgUrl.startsWith('https://')) {
+                    const cleanPath = absoluteImgUrl.replace(/^(\.\/|\/)+/, '');
+                    absoluteImgUrl = `${window.location.origin}/${cleanPath}`;
+                }
+                
+                const optionLine = i.length !== "לא רלוונטי" ? `אורך שרשרת: ${i.length} | ` : '';
                 itemsHtml += `
-                    <tr style="border-bottom:1px solid #eee;">
-                        <td style="padding:10px;"><img src="${absoluteImgUrl}" width="60" height="60" style="object-fit:cover; border-radius:8px;" onerror="this.src='https://via.placeholder.com/60'"></td>
-                        <td style="padding:10px;"><strong>${i.title}</strong><br>כמות: ${i.quantity}</td>
-                        <td style="padding:10px; text-align:left;">${i.price} ₪</td>
-                    </tr>`;
+                    <tr style="vertical-align: middle; border-bottom: 1px solid #e5e7eb;">
+                      <td style="padding: 18px 0 18px 15px; width: 90px;">
+                        <img style="height: 90px; width: 90px; object-fit: cover; border-radius: 12px; border: 1px solid #e5e7eb;" height="90" width="90" src="${absoluteImgUrl}" alt="item" onerror="this.src='https://via.placeholder.com/90'">
+                      </td>
+                      <td style="padding: 18px 10px; width: 100%; line-height: 1.6;">
+                        <div style="font-weight: 600; color: #1c1917; font-size: 15px;">${i.title}</div>
+                        <div style="font-size: 13px; color: #57534e; padding-top: 2px;">${optionLine}${i.upgradeText}</div>
+                        <div style="font-size: 12px; color: #78716c; padding-top: 4px; font-weight: 500;">כמות: ${i.quantity}</div>
+                      </td>
+                      <td style="padding: 18px 0 18px 0; white-space: nowrap; text-align: left; font-weight: 700; color: #064e3b; font-size: 15px;">
+                        ${(i.price + i.upgradeVal) * i.quantity} ₪
+                      </td>
+                    </tr>
+                `;
             });
             itemsHtml += `</table>`;
 
             try {
-                // מייל 1: התראה למוכר (לך)
                 await emailjs.send("service_5lsrr43", "template_lw08urn", {
                     to_email: "yh257366@gmail.com",
-                    subject: `הזמנה חדשה התקבלה בחנות! מספר ${orderId}`,
+                    to_name: "תכשיטי מינרל גולד",
                     customer_name: name,
                     customer_email: customerEmail,
                     customer_phone: phone,
-                    order_items: itemsHtml,
-                    total_price: total,
+                    customer_address: fullAddress,
+                    order_items: itemsHtml, 
                     shipping_method: shippingText,
+                    total_price: total + " ₪",
+                    customer_notes: notes,
                     order_id: orderId
                 });
 
-                // מייל 2: אישור רכישה לקונה 
-                await emailjs.send("service_5lsrr43", "template_lw08urn", {
-                    to_email: customerEmail,
-                    subject: `תודה על הזמנתך מתכשיטי מינרל גולד! מספר הזמנה ${orderId}`,
-                    customer_name: name,
-                    customer_email: customerEmail,
-                    customer_phone: phone,
-                    order_items: itemsHtml,
-                    total_price: total,
-                    shipping_method: shippingText,
-                    order_id: orderId
-                });
+                const formData = new FormData();
+                formData.append("order_id", orderId);
+                formData.append("name", name);
+                formData.append("phone", phone);
+                formData.append("email", customerEmail);
+                formData.append("address", fullAddress);
+                formData.append("shipping", shippingText);
+                formData.append("total", total + " ₪");
+                formData.append("notes", notes);
+                
+                const itemsText = cart.map(i => `${i.title} (אורך: ${i.length}, כמות: ${i.quantity})`).join(", ");
+                formData.append("items", itemsText);
+
+                fetch(CORRECT_GOOGLE_URL, {
+                    method: "POST",
+                    body: formData,
+                    mode: "no-cors"
+                }).catch(err => console.error("Google Sheets Error:", err));
 
                 document.getElementById('summary-order-id').innerText = orderId;
+                document.getElementById('print-order-id').innerText = orderId;
                 document.getElementById('summary-table-container').innerHTML = itemsHtml;
-                document.getElementById('summary-customer-details').innerHTML = `<div>שם: ${name}</div><div>טלפון: ${phone}</div><div>אימייל: ${customerEmail}</div><div>משלוח: ${shippingText}</div>`;
-                document.getElementById('summary-final-total-row').innerHTML = `<span>לתשלום סופי:</span><span>${total}</span>`;
-
+                
+                document.getElementById('summary-customer-details').innerHTML = `
+                    <div><strong>שם מלא:</strong> ${name}</div>
+                    <div><strong>טלפון:</strong> ${phone}</div>
+                    <div><strong>אימייל:</strong> ${customerEmail}</div>
+                    <div><strong>כתובת למשלוח:</strong> ${fullAddress}</div>
+                    <div class="md:col-span-2"><strong>אופן משלוח נבחר:</strong> ${shippingText}</div>
+                    <div class="md:col-span-2"><strong>הערות מיוחדות:</strong> ${notes}</div>
+                `;
+                
+                document.getElementById('summary-final-total-row').innerHTML = `
+                    <span>לתשלום סופי (כולל משלוח):</span>
+                    <span class="text-xl text-emerald-800 font-black">${total} ₪</span>
+                `;
+                
                 cart = [];
-                saveCart();
+                localStorage.removeItem('mineral_silver_cart');
                 updateNavCount();
+                e.target.reset();
                 showView('summary');
+
             } catch (err) {
-                console.error(err);
-                alert("שגיאה בעיבוד ההזמנה.");
+                console.error("EmailJS Error:", err);
+                alert("חל שיבוש זמני בשליחת הודעת האישור האוטומטית, אך אל דאגה – פרטי ההזמנה שלך שמורים אצלנו וניצור עמך קשר בהקדם.");
             } finally {
+                submitBtn.innerText = "אישור ושליחת הזמנה";
                 submitBtn.disabled = false;
             }
         }
-
+        
         updateNavCount();
         renderGallery();
     </script>
