@@ -322,10 +322,20 @@
             if (saved) { try { cart = JSON.parse(saved); } catch(e) { cart = []; } }
         }
         loadCart();
+function showView(viewName) {
+            document.querySelectorAll('.view-section').forEach(section => {
+                section.classList.remove('active');
+                section.style.transform = 'none'; 
+            });
+            
+            const targetView = document.getElementById(`view-${viewName}`);
+            targetView.classList.add('active');
+            
+            if (viewName === 'summary') {
+                targetView.style.contain = 'content';
+                targetView.querySelectorAll('.btn-animate').forEach(el => el.classList.remove('btn-animate'));
+            }
 
-        function showView(viewName) {
-            document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
-            document.getElementById(`view-${viewName}`).classList.add('active');
             window.scrollTo(0, 0);
             if (viewName === 'checkout') updateCheckoutDisplay();
         }
@@ -366,8 +376,15 @@
             
             let dimensionsHtml = '';
             if (p.type === "עגילים") {
+                let sizeLabel = "גודל האבן";
+                if (["007", "013", "014", "601"].includes(p.sku)) {
+                    sizeLabel = "גודל הקבושון";
+                } else if (p.sku === "016") {
+                    sizeLabel = "קוטר החישוק";
+                }
+
                 dimensionsHtml = `
-                    <p><strong>גודל האבן/הקבושון:</strong> ${p.stoneSize || "כ-1.2*1.2 ס\"מ"}</p>
+                    <p><strong>${sizeLabel}:</strong> ${p.stoneSize || "כ-1.2*1.2 ס\"מ"}</p>
                     <p><strong>אורך כולל של העגיל:</strong> ${p.totalLength || "כ-3.5 ס\"מ"}</p>
                 `;
             } else if (p.size) {
@@ -418,7 +435,7 @@
                 upgradeSectionHtml = `
                     <div class="mt-4 pt-4 border-t border-stone-200">
                         <p class="text-sm font-extrabold text-amber-900 mb-3 bg-amber-50 p-3.5 rounded-xl border border-amber-200 leading-relaxed text-center">
-                          ✨ רוצים לשדרג את התכשיט? ניתן לשדרג את כל המתכות לכסף 925 או לגולדפילד איכותי! ✨
+                            ✨ רוצים לשדרג את התכשיט? ניתן לשדרג את כל המתכות לכסף 925 או לגולדפילד איכותי! ✨
                         </p>
                         <div>
                             <label class="block text-xs font-bold text-stone-700 mb-1.5">שדרוג סוג המתכת</label>
@@ -457,7 +474,7 @@
                             </div>
                         </div>
                         <div class="mt-8 flex gap-4">
-                            <button onclick="addToCartFromPage(event, ${p.id})" class="flex-1 bg-stone-950 text-white font-medium py-4 rounded-xl hover:bg-black transition-colors text-center shadow-sm btn-animate">
+                            <button onclick="addToCartFromPage(event, ${p.id})" class="flex-1 bg-stone-950 text-white font-medium py-4 rounded-xl hover:bg-black transition-colors text-center shadow-sm">
                                 הוספה לעגלת הקניות
                             </button>
                         </div>
@@ -513,7 +530,7 @@
                 
                 return `
                     <div class="flex gap-4 items-center py-4 text-sm">
-                        <button onclick="removeFromCart(${item.rowId})" class="text-red-500 font-bold text-xl hover:text-red-700 px-2 btn-animate" title="הסר פריט זה">×</button>
+                        <button onclick="removeFromCart(${item.rowId})" class="text-red-500 font-bold text-xl hover:text-red-700 px-2" title="הסר פריט זה">×</button>
                         <img src="${item.img}" alt="${item.title}" class="w-12 h-12 object-cover rounded-lg border border-stone-200" onerror="this.src='https://via.placeholder.com/50'">
                         <div class="flex-1">
                             <p class="font-medium text-stone-950">${item.title}</p>
@@ -557,29 +574,40 @@
             document.getElementById('checkout-total').innerText = (subtotal + shippingVal) + " ₪";
         }
 
-        // הורדת קובץ PDF בצורה ישירה וללא חלון הדפסה (באמצעות html2pdf)
-        function triggerPdfSave() {
+        // תיקון אגרסיבי והבטחת טעינת רכיב ה-PDF בזמן אמת מתוך הפונקציה
+        async function triggerPdfSave() {
             const element = document.querySelector('#view-summary .max-w-3xl');
             const orderId = document.getElementById('summary-order-id').innerText;
             
+            if (typeof html2pdf === 'undefined') {
+                const btn = document.querySelector('button[onclick="triggerPdfSave()"]');
+                const originalText = btn.innerText;
+                btn.innerText = "טוען רכיב PDF...";
+                
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+                btn.innerText = originalText;
+            }
+
             const opt = {
-                margin:       10,
+                margin:       [10, 10, 10, 10],
                 filename:     `order-${orderId}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true }, 
+                html2canvas:  { scale: 2, useCORS: true, logging: false, letterRendering: true }, 
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
             html2pdf().set(opt).from(element).save();
         }
 
-        // הדפסה רגילה כולל הצגה זמנית של כותרת ההדפסה הייעודית
+        // הפעלת חלונית הדפסה נקייה המנוהלת באמצעות ה-CSS Print Media Query
         function triggerPrintWithHeader() {
-            document.getElementById('print-header').style.display = 'block';
             window.print();
-            setTimeout(() => {
-                document.getElementById('print-header').style.display = 'none';
-            }, 1000);
         }
 
         function handleContactSubmit(e) {
@@ -652,15 +680,20 @@
             const total = subtotal + shippingVal;
             const orderId = "MG-" + Date.now().toString().slice(-6);
 
-            // טבלת פריטים משופרת המציגה תמונות ברורות וגדולות יותר (90px)
+            // בניית טבלת פריטים עם ניקוי מוחלט לנתיבי תמונות מקומיים ויחסיים (למשל ./images) עבור תוכנות המייל
             let itemsHtml = `<table style="width: 100%; border-collapse: collapse; text-align: right; direction: rtl; margin-bottom: 20px;">`;
             cart.forEach(i => {
-                const absoluteImgUrl = i.img.startsWith('http') ? i.img : window.location.origin + i.img.replace('.', '');
+                let absoluteImgUrl = i.img;
+                if (!absoluteImgUrl.startsWith('http://') && !absoluteImgUrl.startsWith('https://')) {
+                    const cleanPath = absoluteImgUrl.replace(/^(\.\/|\/)+/, '');
+                    absoluteImgUrl = `${window.location.origin}/${cleanPath}`;
+                }
+                
                 const optionLine = i.length !== "לא רלוונטי" ? `אורך שרשרת: ${i.length} | ` : '';
                 itemsHtml += `
                     <tr style="vertical-align: middle; border-bottom: 1px solid #e5e7eb;">
                       <td style="padding: 18px 0 18px 15px; width: 90px;">
-                        <img style="height: 90px; width: 90px; object-fit: cover; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05);" height="90" width="90" src="${absoluteImgUrl}" alt="item" onerror="this.src='https://via.placeholder.com/90'">
+                        <img style="height: 90px; width: 90px; object-fit: cover; border-radius: 12px; border: 1px solid #e5e7eb;" height="90" width="90" src="${absoluteImgUrl}" alt="item" onerror="this.src='https://via.placeholder.com/90'">
                       </td>
                       <td style="padding: 18px 10px; width: 100%; line-height: 1.6;">
                         <div style="font-weight: 600; color: #1c1917; font-size: 15px;">${i.title}</div>
