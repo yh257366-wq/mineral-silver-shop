@@ -739,7 +739,7 @@ function showView(viewName) {
             itemsHtml += `</table>`;
 
             try {
-                await emailjs.send("service_5lsrr43", "template_lw08urn", {
+await emailjs.send("service_5lsrr43", "template_lw08urn", {
                     to_email: "yh257366@gmail.com",
                     to_name: "תכשיטי מינרל גולד",
                     customer_name: name,
@@ -750,11 +750,11 @@ function showView(viewName) {
                     shipping_method: shippingText,
                     total_price: total + " ₪",
                     customer_notes: notes,
-                    order_id: orderId
+                    order_id: orderId 
                 });
 
                 const formData = new FormData();
-                formData.append("order_id", orderId);
+                formData.append("order_id", orderId); 
                 formData.append("name", name);
                 formData.append("phone", phone);
                 formData.append("email", customerEmail);
@@ -763,7 +763,15 @@ function showView(viewName) {
                 formData.append("total", total + " ₪");
                 formData.append("notes", notes);
                 
-                const itemsText = cart.map(i => `${i.title} (אורך: ${i.length}, כמות: ${i.quantity})`).join(", ");
+                const itemsText = cart.map(i => {
+                    let absoluteImgUrl = i.img;
+                    if (!absoluteImgUrl.startsWith('http://') && !absoluteImgUrl.startsWith('https://')) {
+                        const cleanPath = absoluteImgUrl.replace(/^(\.\/|\/)+/, '');
+                        absoluteImgUrl = `${window.location.origin}/${cleanPath}`;
+                    }
+                    return `${i.title} (אורך: ${i.length}, כמות: ${i.quantity}, תמונה: ${absoluteImgUrl})`;
+                }).join(" | ");
+                
                 formData.append("items", itemsText);
 
                 fetch(CORRECT_GOOGLE_URL, {
