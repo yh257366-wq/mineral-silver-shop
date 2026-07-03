@@ -683,7 +683,7 @@ function showView(viewName, isPopState = false) {
             });
         }
 
-        async function handleFormSubmit(e) {
+async function handleFormSubmit(e) {
             e.preventDefault();
             if(document.getElementById('order-honey-website').value !== "" || document.getElementById('order-honey-nickname').value !== "") return;
             
@@ -717,7 +717,7 @@ function showView(viewName, isPopState = false) {
             const total = subtotal + shippingVal;
             const orderId = "MG-" + Date.now().toString().slice(-6);
 
-            // בניית טבלת פריטים עם ניקוי מוחלט לנתיבי תמונות מקומיים ויחסיים (למשל ./images) עבור תוכנות המייל
+            // בניית טבלת פריטים
             let itemsHtml = `<table style="width: 100%; border-collapse: collapse; text-align: right; direction: rtl; margin-bottom: 20px;">`;
             cart.forEach(i => {
                 let absoluteImgUrl = i.img;
@@ -745,91 +745,94 @@ function showView(viewName, isPopState = false) {
             });
             itemsHtml += `</table>`;
 
-        try {
-        // 1. שליחת מייל לבעל החנות (התבנית המקורית)
-        await emailjs.send("service_5lsrr43", "template_lw08urn", {
-            to_email: "yh257366@gmail.com",
-            to_name: "תכשיטי מינרל גולד",
-            customer_name: name,
-            customer_email: customerEmail,
-            customer_phone: phone,
-            customer_address: fullAddress,
-            order_items: itemsHtml, 
-            shipping_method: shippingText,
-            total_price: total + " ₪",
-            customer_notes: notes,
-            order_id: orderId 
-        });
+            // הכנת הנתונים לגוגל שיטס מראש
+            const formData = new FormData();
+            formData.append("order_id", orderId); 
+            formData.append("name", name);
+            formData.append("phone", phone);
+            formData.append("email", customerEmail);
+            formData.append("address", fullAddress);
+            formData.append("shipping", shippingText);
+            formData.append("total", total + " ₪");
+            formData.append("notes", notes);
+            
+            const itemsText = cart.map(i => {
+                const optionLine = i.length !== "לא רלוונטי" ? `אורך: ${i.length}, ` : '';
+                return `${i.title} (${optionLine}שדרוג: ${i.upgradeText}, כמות: ${i.quantity})`;
+            }).join(" | ");
+            
+            formData.append("items", itemsText);
 
-        // 2. שליחת מייל סיכום הזמנה ללקוח (התבנית החדשה שלך)
-        await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
-            to_email: customerEmail, // כתובת האימייל שהזין הלקוח בטופס
-            customer_name: name,
-            order_items: itemsHtml, 
-            shipping_method: shippingText,
-            total_price: total + " ₪",
-            order_id: orderId 
-        });
+            try {
+                // 1. שמירת הנתונים בגוגל שיטס תחילה כדי שלא נפספס ליד בשל שגיאת מייל
+                await fetch(CORRECT_GOOGLE_URL, {
+                    method: "POST",
+                    body: formData,
+                    mode: "no-cors"
+                }).catch(err => console.error("Google Sheets Error:", err));
 
-        // 3. שמירת הנתונים בגוגל שיטס והצגת סיכום באתר
-        const formData = new FormData();
-        formData.append("order_id", orderId); 
-        formData.append("name", name);
-        formData.append("phone", phone);
-        formData.append("email", customerEmail);
-        formData.append("address", fullAddress);
-        formData.append("shipping", shippingText);
-        formData.append("total", total + " ₪");
-        formData.append("notes", notes);
-        
-        const itemsText = cart.map(i => {
-            const optionLine = i.length !== "לא רלוונטי" ? `אורך: ${i.length}, ` : '';
-            return `${i.title} (${optionLine}שדרוג: ${i.upgradeText}, כמות: ${i.quantity})`;
-        }).join(" | ");
-        
-        formData.append("items", itemsText);
+                // 2. שליחת מייל לבעל החנות
+                await emailjs.send("service_5lsrr43", "template_lw08urn", {
+                    to_email: "yh257366@gmail.com",
+                    to_name: "תכשיטי מינרל גולד",
+                    customer_name: name,
+                    customer_email: customerEmail,
+                    customer_phone: phone,
+                    customer_address: fullAddress,
+                    order_items: itemsHtml, 
+                    shipping_method: shippingText,
+                    total_price: total + " ₪",
+                    customer_notes: notes,
+                    order_id: orderId 
+                });
 
-        fetch(CORRECT_GOOGLE_URL, {
-            method: "POST",
-            body: formData,
-            mode: "no-cors"
-        }).catch(err => console.error("Google Sheets Error:", err));
+                // 3. שליחת מייל סיכום הזמנה ללקוח - הוספנו מפתחות חלופיים נפוצים לגיבוי
+                await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
+                    to_email: customerEmail,
+                    email: customerEmail, // גיבוי למקרה שהשדה בתבנית קרוי email
+                    customer_email: customerEmail, // גיבוי נוסף
+                    customer_name: name,
+                    order_items: itemsHtml, 
+                    shipping_method: shippingText,
+                    total_price: total + " ₪",
+                    order_id: orderId 
+                });
 
-        document.getElementById('summary-order-id').innerText = orderId;
-        document.getElementById('print-order-id').innerText = orderId;
-        document.getElementById('summary-table-container').innerHTML = itemsHtml;
-        
-        document.getElementById('summary-customer-details').innerHTML = `
-            <div><strong>שם מלא:</strong> ${name}</div>
-            <div><strong>טלפון:</strong> ${phone}</div>
-            <div><strong>אימייל:</strong> ${customerEmail}</div>
-            <div><strong>כתובת למשלוח:</strong> ${fullAddress}</div>
-            <div class="md:col-span-2"><strong>אופן משלוח נבחר:</strong> ${shippingText}</div>
-            <div class="md:col-span-2"><strong>הערות מיוחדות:</strong> ${notes}</div>
-        `;
-        
-        document.getElementById('summary-final-total-row').innerHTML = `
-            <span>לתשלום סופי (כולל משלוח):</span>
-            <span class="text-xl text-emerald-800 font-black">${total} ₪</span>
-        `;
-        
-        cart = [];
-        localStorage.removeItem('mineral_silver_cart');
-        updateNavCount();
-        e.target.reset();
-        showView('summary');
+            } catch (err) {
+                // הדפסת השגיאה אך אינטגרציה רכה - מאפשרים מעבר לדף תודה גם אם המייל ללקוח נכשל
+                console.error("שגיאה חלקית בתהליך שליחת המיילים:", err);
+            }
 
- } catch (err) {
-        console.error("שגיאה בתהליך שליחת ההזמנה:", err);
-        alert("התרחשה שגיאה בשליחת ההזמנה. אנא נסה שנית או צור קשר.");
-    } finally {
-        if (typeof submitBtn !== 'undefined' && submitBtn) {
-            submitBtn.innerText = "אישור ושליחת הזמנה";
-            submitBtn.disabled = false;
+            // עדכון ממשק המשתמש והצגת דף סיכום (מתבצע בכל מקרה)
+            document.getElementById('summary-order-id').innerText = orderId;
+            document.getElementById('print-order-id').innerText = orderId;
+            document.getElementById('summary-table-container').innerHTML = itemsHtml;
+            
+            document.getElementById('summary-customer-details').innerHTML = `
+                <div><strong>שם מלא:</strong> ${name}</div>
+                <div><strong>טלפון:</strong> ${phone}</div>
+                <div><strong>אימייל:</strong> ${customerEmail}</div>
+                <div><strong>כתובת למשלוח:</strong> ${fullAddress}</div>
+                <div class="md:col-span-2"><strong>אופן משלוח נבחר:</strong> ${shippingText}</div>
+                <div class="md:col-span-2"><strong>הערות מיוחדות:</strong> ${notes}</div>
+            `;
+            
+            document.getElementById('summary-final-total-row').innerHTML = `
+                <span>לתשלום סופי (כולל משלוח):</span>
+                <span class="text-xl text-emerald-800 font-black">${total} ₪</span>
+            `;
+            
+            cart = [];
+            localStorage.removeItem('mineral_silver_cart');
+            updateNavCount();
+            e.target.reset();
+            showView('summary');
+
+            if (typeof submitBtn !== 'undefined' && submitBtn) {
+                submitBtn.innerText = "אישור ושליחת הזמנה";
+                submitBtn.disabled = false;
+            }
         }
-    }
-}
-
 // האזנה לחיצי הניווט (קדימה/אחורה) של הדפדפן
 window.addEventListener('popstate', function(event) {
     if (event.state && event.state.view) {
