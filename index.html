@@ -343,7 +343,7 @@
         ];
 
         let cart = [];
-        const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwnvO1y-UjD3Izf9dV6YkcLPIn_KbfAAX14Ag3sclXoocSHb1xiZeblBkFkLKIC9UoR/exec"; 
+        const CORRECT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbztsruadAZY4y06pYQp6IcZ9w-EwQE9pfk6UQSmXOJy3sx3cCyKTZ0ZHos52DgC1H6Z/exec"; 
         emailjs.init("nAdoBiRsxsAIDH8qX");
 
         function saveCart() { localStorage.setItem('mineral_silver_cart', JSON.stringify(cart)); }
@@ -770,13 +770,9 @@ await emailjs.send("service_5lsrr43", "template_lw08urn", {
                 formData.append("total", total + " ₪");
                 formData.append("notes", notes);
                 
-                const itemsText = cart.map(i => {
-                    let absoluteImgUrl = i.img;
-                    if (!absoluteImgUrl.startsWith('http://') && !absoluteImgUrl.startsWith('https://')) {
-                        const cleanPath = absoluteImgUrl.replace(/^(\.\/|\/)+/, '');
-                        absoluteImgUrl = `${window.location.origin}/${cleanPath}`;
-                    }
-                    return `${i.title} (אורך: ${i.length}, כמות: ${i.quantity}, תמונה: ${absoluteImgUrl})`;
+              const itemsText = cart.map(i => {
+                    const optionLine = i.length !== "לא רלוונטי" ? `אורך: ${i.length}, ` : '';
+                    return `${i.title} (${optionLine}שדרוג: ${i.upgradeText}, כמות: ${i.quantity})`;
                 }).join(" | ");
                 
                 formData.append("items", itemsText);
