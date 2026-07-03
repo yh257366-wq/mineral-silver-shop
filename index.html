@@ -745,97 +745,112 @@ function showView(viewName, isPopState = false) {
             });
             itemsHtml += `</table>`;
 
-            try {
-await emailjs.send("service_5lsrr43", "template_lw08urn", {
-                    to_email: "yh257366@gmail.com",
-                    to_name: "תכשיטי מינרל גולד",
-                    customer_name: name,
-                    customer_email: customerEmail,
-                    customer_phone: phone,
-                    customer_address: fullAddress,
-                    order_items: itemsHtml, 
-                    shipping_method: shippingText,
-                    total_price: total + " ₪",
-                    customer_notes: notes,
-                    order_id: orderId 
-                });
+        try {
+        // 1. שליחת מייל לבעל החנות (התבנית המקורית)
+        await emailjs.send("service_5lsrr43", "template_lw08urn", {
+            to_email: "yh257366@gmail.com",
+            to_name: "תכשיטי מינרל גולד",
+            customer_name: name,
+            customer_email: customerEmail,
+            customer_phone: phone,
+            customer_address: fullAddress,
+            order_items: itemsHtml, 
+            shipping_method: shippingText,
+            total_price: total + " ₪",
+            customer_notes: notes,
+            order_id: orderId 
+        });
 
-                const formData = new FormData();
-                formData.append("order_id", orderId); 
-                formData.append("name", name);
-                formData.append("phone", phone);
-                formData.append("email", customerEmail);
-                formData.append("address", fullAddress);
-                formData.append("shipping", shippingText);
-                formData.append("total", total + " ₪");
-                formData.append("notes", notes);
-                
-              const itemsText = cart.map(i => {
-                    const optionLine = i.length !== "לא רלוונטי" ? `אורך: ${i.length}, ` : '';
-                    return `${i.title} (${optionLine}שדרוג: ${i.upgradeText}, כמות: ${i.quantity})`;
-                }).join(" | ");
-                
-                formData.append("items", itemsText);
+        // 2. שליחת מייל סיכום הזמנה ללקוח (התבנית החדשה שלך)
+        await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
+            to_email: customerEmail, // כתובת האימייל שהזין הלקוח בטופס
+            customer_name: name,
+            order_items: itemsHtml, 
+            shipping_method: shippingText,
+            total_price: total + " ₪",
+            order_id: orderId 
+        });
 
-                fetch(CORRECT_GOOGLE_URL, {
-                    method: "POST",
-                    body: formData,
-                    mode: "no-cors"
-                }).catch(err => console.error("Google Sheets Error:", err));
+        // 3. שמירת הנתונים בגוגל שיטס והצגת סיכום באתר
+        const formData = new FormData();
+        formData.append("order_id", orderId); 
+        formData.append("name", name);
+        formData.append("phone", phone);
+        formData.append("email", customerEmail);
+        formData.append("address", fullAddress);
+        formData.append("shipping", shippingText);
+        formData.append("total", total + " ₪");
+        formData.append("notes", notes);
+        
+        const itemsText = cart.map(i => {
+            const optionLine = i.length !== "לא רלוונטי" ? `אורך: ${i.length}, ` : '';
+            return `${i.title} (${optionLine}שדרוג: ${i.upgradeText}, כמות: ${i.quantity})`;
+        }).join(" | ");
+        
+        formData.append("items", itemsText);
 
-                document.getElementById('summary-order-id').innerText = orderId;
-                document.getElementById('print-order-id').innerText = orderId;
-                document.getElementById('summary-table-container').innerHTML = itemsHtml;
-                
-                document.getElementById('summary-customer-details').innerHTML = `
-                    <div><strong>שם מלא:</strong> ${name}</div>
-                    <div><strong>טלפון:</strong> ${phone}</div>
-                    <div><strong>אימייל:</strong> ${customerEmail}</div>
-                    <div><strong>כתובת למשלוח:</strong> ${fullAddress}</div>
-                    <div class="md:col-span-2"><strong>אופן משלוח נבחר:</strong> ${shippingText}</div>
-                    <div class="md:col-span-2"><strong>הערות מיוחדות:</strong> ${notes}</div>
-                `;
-                
-                document.getElementById('summary-final-total-row').innerHTML = `
-                    <span>לתשלום סופי (כולל משלוח):</span>
-                    <span class="text-xl text-emerald-800 font-black">${total} ₪</span>
-                `;
-                
-                cart = [];
-                localStorage.removeItem('mineral_silver_cart');
-                updateNavCount();
-                e.target.reset();
-                showView('summary');
+        fetch(CORRECT_GOOGLE_URL, {
+            method: "POST",
+            body: formData,
+            mode: "no-cors"
+        }).catch(err => console.error("Google Sheets Error:", err));
 
-            } catch (err) {
-                console.error("EmailJS Error:", err);
-                alert("חל שיבוש זמני בשליחת הודעת האישור האוטומטית, אך אל דאגה – פרטי ההזמנה שלך שמורים אצלנו וניצור עמך קשר בהקדם.");
-            } finally {
-                submitBtn.innerText = "אישור ושליחת הזמנה";
-                submitBtn.disabled = false;
-            }
+        document.getElementById('summary-order-id').innerText = orderId;
+        document.getElementById('print-order-id').innerText = orderId;
+        document.getElementById('summary-table-container').innerHTML = itemsHtml;
+        
+        document.getElementById('summary-customer-details').innerHTML = `
+            <div><strong>שם מלא:</strong> ${name}</div>
+            <div><strong>טלפון:</strong> ${phone}</div>
+            <div><strong>אימייל:</strong> ${customerEmail}</div>
+            <div><strong>כתובת למשלוח:</strong> ${fullAddress}</div>
+            <div class="md:col-span-2"><strong>אופן משלוח נבחר:</strong> ${shippingText}</div>
+            <div class="md:col-span-2"><strong>הערות מיוחדות:</strong> ${notes}</div>
+        `;
+        
+        document.getElementById('summary-final-total-row').innerHTML = `
+            <span>לתשלום סופי (כולל משלוח):</span>
+            <span class="text-xl text-emerald-800 font-black">${total} ₪</span>
+        `;
+        
+        cart = [];
+        localStorage.removeItem('mineral_silver_cart');
+        updateNavCount();
+        e.target.reset();
+        showView('summary');
+
+ } catch (err) {
+        console.error("שגיאה בתהליך שליחת ההזמנה:", err);
+        alert("התרחשה שגיאה בשליחת ההזמנה. אנא נסה שנית או צור קשר.");
+    } finally {
+        if (typeof submitBtn !== 'undefined' && submitBtn) {
+            submitBtn.innerText = "אישור ושליחת הזמנה";
+            submitBtn.disabled = false;
         }
+    }
+}
 
-        // האזנה לחיצי הניווט (קדימה/אחורה) של הדפדפן
-        window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.view) {
-                showView(event.state.view, true);
-            } else {
-                showView('gallery', true);
-            }
-        });
+// האזנה לחיצי הניווט (קדימה/אחורה) של הדפדפן
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.view) {
+        showView(event.state.view, true);
+    } else {
+        showView('gallery', true);
+    }
+});
 
-        // בדיקה בעת טעינת העמוד האם יש hash בכתובת והצגת הדף המתאים
-        window.addEventListener('DOMContentLoaded', () => {
-            const currentHash = window.location.hash.replace('#', '');
-            const validViews = ['gallery', 'product', 'checkout', 'about', 'contact', 'summary'];
-            
-            if (validViews.includes(currentHash)) {
-                showView(currentHash);
-            } else {
-                history.replaceState({ view: 'gallery' }, "", "#gallery");
-            }
-        });
+// בדיקה בעת טעינת העמוד האם יש hash בכתובת והצגת הדף המתאים
+window.addEventListener('DOMContentLoaded', () => {
+    const currentHash = window.location.hash.replace('#', '');
+    const validViews = ['gallery', 'product', 'checkout', 'about', 'contact', 'summary'];
+    
+    if (validViews.includes(currentHash)) {
+        showView(currentHash);
+    } else {
+        showView('gallery'); // הדבר החסר: מציג את הגלריה בפועל
+        history.replaceState({ view: 'gallery' }, "", "#gallery"); // מעדכן את הכתובת בצורה נקייה
+    }
+});
 
          updateNavCount();
         renderGallery();
