@@ -82,7 +82,12 @@
 
     <main class="max-w-7xl mx-auto px-6 pt-32 pb-24 flex-grow w-full">
         
-        <div id="view-gallery" class="view-section active">
+     <div id="view-gallery" class="view-section active">
+            <!-- באנר מבצע השקה בולט -->
+            <div class="mb-8 p-6 bg-red-50 border-2 border-red-500 rounded-2xl text-center shadow-xs">
+                <h2 class="text-2xl md:text-3xl font-bold text-red-600 animate-pulse">✨ מבצע השקה: 20% הנחה על כל התכשיטים והשדרוגים! ✨</h2>
+            </div>
+
             <div class="mb-12 text-center md:text-right">
                 <p class="text-xs uppercase tracking-widest text-stone-400 mb-2">טבע ויוקרה נפגשים</p>
                 <h1 class="text-4xl md:text-5xl font-serif mb-4">הקולקציה שלנו</h1>
@@ -321,25 +326,25 @@
     </footer>
 
     <script>
-        // בסיס הנתונים המלא והמפורט
+// בסיס הנתונים המלא - המחירים עודכנו ב-20% פחות, ומחזיקים גם את המחיר המקורי לתצוגה
         const products = [
-            { id: 1, title: "תליון קוורץ ורוד", price: 80, sku: "009", type: "תליון", img: "./images/taliyon-kuartz-varod.jpg.png", desc: "תליון יפהפה ומיוחד עם אבן קוורץ ורודה מבריקה מלוטשת קלות. האבן עטופה באמנות בחוט ליפוף מוזהב, ויוצרת מראה יוקרתי ועדין.", material: "אבן קוורץ ורוד טבעית, חוט ליפוף נחושת זהוב", size: "כ-2 ס\"מ" },
-            { id: 2, title: "עגילי קוורץ ורוד", price: 80, sku: "008", type: "עגילים", img: "./images/earrings-kuartz.jpg.png", desc: "עגילים עדינים ומלאי חן עם אבני קוורץ ורוד טבעיות ומבריקות. הליפוף המוזהב סביב האבן מעניק להן נוכחות יוקרתית וייחודית לכל הופעה.", material: "אבן קוורץ ורוד, חוט ליפוף נחושת זהוב", stoneSize: "כ-1.3 ס\"מ", totalLength: "כ-3 ס\"מ" },
-            { id: 3, title: "עגילי חישוק - קשת הצבעים", price: 100, sku: "018", type: "עגילים", img: "./images/earrings-hishuk.jpg.png", desc: "עגילי חישוק מרהיבים המשלבים קשת צבעים ייחודית של חרוזי צ'יפס קטנים המשולבים לאורך החישוק. עיצוב צבעוני, יפהפה ומרשים.", material: "חרוזי צ'יפס צבעוניות בגוון טבעי, חוט נחושת זהוב", stoneSize: "1.6 ס\"מ", totalLength: "כ-3 ס\"מ" },
-            { id: 4, title: "תליון אמטיסט סגול בוהק", price: 120, sku: "001", type: "תליון", img: "./images/taliyon-amethyst.jpg.JPG", desc: "תליון יפהפה ומיוחד עם אבן אמטיסט (אחלמה) סגולה מבריקה מלוטשת קלות. האבן עטופה באמנות בחוט ליפוף זהוב, ויוצרת מראה יוקרתי ומיוחד.", material: "אבן אמטיסט סגולה בוהקת, חוט ליפוף נחושת זהוב", size: "כ-3.5*2 ס\"מ" },
-            { id: 5, title: "תליון אמטיסט סגול טבעי", price: 120, sku: "002", type: "תליון", img: "./images/taliyon-amethyst-natural.jpg.png", desc: "תליון פראי ועוצמתי המציג אבן אמטיסט בצורתה הגולמית והטבעית ביותר. מבנה הגביש הייחודי נשמר במלואו ועטוף בליפוף זהב שמדגיש את המראה הטבעי.", material: "גביש אמטיסט סגול גולמי, חוט ליפוף מצופה זהב", size: "כ-4*2.5 ס\"מ" },
-            { id: 6, title: "תליון סיטרין - כסף 925", price: 150, sku: "003", type: "תליון", img: "./images/taliyon-sitrin.jpg.png", desc: "תליון יוקרתי עם אבן סיטרין בגוון צהוב-דבש חמים וקורן, המסמלת שפע ואנרגיה חיובית. התליון משולב ישירות עם שרשרת כסף 925 להשלמת המראה המלכותי.", material: "אבן סיטרין טבעית, חוט ליפוף יוקרתי, שרשרת כסף 925", size: "כ-2.8*1.8 ס\"מ" },
-            { id: 7, title: "תליון סודליט כחול-לבן", price: 80, sku: "004", type: "תליון", img: "./images/taliyon-sodalite.jpg.png", desc: "תליון מרשים מאבן סודליט טבעית המציגה טקסטורות עמוקות של כחול עמוק משולב בעורקי לבן ייחודיים. כל אבן היא יצירת אמנות של הטבע בפני עצמה.", material: "אבן סודליט כחולה טבעית, חוט ליפוף נחושת מצופה זהב", size: "כ-3*2 ס\"מ" },
-            { id: 8, title: "עגילי סודליט כחול-לבן", price: 80, sku: "005", type: "עגילים", img: "./images/earrings-sodalite.jpg.png", desc: "עגילי אבן סודליט תואמים המעניקים מראה אלגנטי עם נוכחות מלכותית. השילוב בין הכחול העמוק לזהב המלפף יוצר ניגודיות מושלמת ומחמיאה.", material: "אבני סודליט כחול-לבן, חוט ליפוף נחושת מצופה זהב", stoneSize: "כ-1.2*1.2 ס\"מ", totalLength: "כ-3.5 ס\"מ" },
-            { id: 9, title: "סט תליון ועגילים סודליט", price: 140, sku: "006", type: "סט תכשיטים", img: "./images/set-sodalite.jpg.png", desc: "הסט המלא והמלכותי שלנו הכולל את התליון המרשים ועגילי הסודליט התואמים במחיר משתלם ומיוחד. מתנה מושלמת לעצמך או לאדם קרוב.", material: "אבני סודליט כחולות, חוט ליפוף נחושת מוזהב", size: "סט של 3 פריטים" },
-            { id: 10, title: "עגילי קבושון ורודות", price: 80, sku: "007", type: "עגילים", img: "./images/earrings-kabushon.jpg.JPG", desc: "עגילים צבעוניים ויפהפיים עם קבושונים עגולים מבריקים בגוון ורוד-סגול עז עם דוגמת סדקים מרהיבה. הקבושונים עטופים בעדינות בחוט ליפוף מוזהב, ויוצרות מראה צבעוני ומלא חיים.", material: "אבני קבושון ורודות, חוט ליפוף נחושת מוזהב", stoneSize: "קוטר כ-1.8 ס\"מ", totalLength: "כ-4 ס\"מ" },
-            { id: 11, title: "עגילי קבושון ורדים", price: 80, sku: "015", type: "עגילים", img: "./images/earrings-roses.jpg.png", desc: "עגילים צבעוניים ומלאי חיים עם דוגמה מרהיבה של ורדים בתוך אבני הקבושון. מעניקים מראה פורח ומלא חיים.", material: "קבושון אקרילי מעוצב, ליפוף נחושת מצופה זהב", stoneSize: "קוטר כ-1.4 ס\"מ", totalLength: "כ-3.5 ס\"מ" },
-            { id: 12, title: "תליון קבושון ורדים", price: 80, sku: "016", type: "תליון", img: "./images/taliyon-kabushon-vradim.jpg.png", desc: "תליון צבעוני ויפהפה עם קבושון אליפסי מבריק בעל דוגמת ורדים מרהיבה. הקבושון עטוף בעדינות בחוט ליפוף מוזהב, ויוצר מראה עדין ומלא חיים.", material: "קבושון אקרילי צבוע, חוט ליפוף נחושת מוזהב", size: "1.8*1.3 ס\"מ" },
-            { id: 13, title: "סט תליון ועגילים קבושון ורדים", price: 140, sku: "017", type: "סט תכשיטים", img: "./images/set-kabushon-vradim.jpg.png", desc: "סט תליון ועגילים צבעוניים יפהפיים עם קבושונים אליפסיים מבריקים בדוגמת ורדים מרהיבה. הקבושונים עטופים בעדינות בחוט ליפוף מוזהב, למראה פורח ומלא חיים.", material: "קבושונים אקריליים מעוצבים, חוט ליפוף נחושת מוזהב", size: "תליון + זוג עגילים תואמים" },
-            { id: 14, title: "עגילי אפטיט כחול", price: 80, sku: "012", type: "עגילים", img: "./images/earrings-apatite-blue.jpg.png", desc: "עגילים מרשימים וייחודיים המשלבים אבני אפטיט (Apatite) טבעיות בגוון כחול-טורקיז עמוק ומהפנט. שילוב מושלם של טבע ואלגנטיות.", material: "אבני אפטיט כחולות טבעיות, חוט ליפוף מוזהב איכותי", stoneSize: "כ-1*1 ס\"מ", totalLength: "כ-3.5 ס\"מ" },
-            { id: 15, title: "תליון מלכיט ירוק", price: 80, sku: "014", type: "תליון", img: "./images/taliyon-malachite-green.jpg.png", desc: "תליון עוצר נשימה המציג אבן מלכיט (Malachite) ירוקה טבעית בגווני ירוק שונים המאפיינים אבן זו. נוכחות חזקה ויוקרתית.", material: "אבן מלכיט ירוקה טבעית, חוט ליפוף נחושת מוזהב", size: "כ-3.2*2.2 ס\"מ" },
-            { id: 16, title: "תליון אפטיט כחול", price: 80, sku: "011", type: "תליון", img: "./images/taliyon-apatite.png", desc: "תליון מרשים במיוחד מאבן אפטיט כחול טבעי, בגוון יפהפה של כחול-ירוק, עטופה בעדינות בחוט זהוב, ויוצרת שילוב צבעים מעורר השראה.", material: "אבן אפטיט כחול טבעי גולמי, חוט ליפוף נחושת מוזהב.", size: "כ- 2*2 ס\"מ" },
-            { id: 17, title: "סט תליון ועגילים אפטיט כחול", price: 140, sku: "013", type: "סט תכשיטים", img: "./images/set-apatite.png", desc: "סט תליון ועגילים מרשימים במיוחד מאבן אפטיט כחול טבעי, בגוון יפהפה של כחול-ירוק, עטופים בעדינות בחוט מוזהב, ויוצרים שילוב צבעים מעורר השראה.", material: "אבן אפטיט כחול טבעי גולמי, חוט ליפוף נחושת בציפוי זהב.", size: "גודל האבן של התליון: כ- 2*2 ס\"מ<br>גודל האבן של העגילים: כ- 1*1 ס\"מ<br>אורך כולל של העגילים: כ-3 ס\"מ" }
+            { id: 1, title: "תליון קוורץ ורוד", price: 64, originalPrice: 80, sku: "009", type: "תליון", img: "./images/taliyon-kuartz-varod.jpg.png", desc: "תליון יפהפה ומיוחד עם אבן קוורץ ורודה מבריקה מלוטשת קלות. האבן עטופה באמנות בחוט ליפוף מוזהב, ויוצרת מראה יוקרתי ועדין.", material: "אבן קוורץ ורוד טבעית, חוט ליפוף נחושת זהוב", size: "כ-2 ס\"מ" },
+            { id: 2, title: "עגילי קוורץ ורוד", price: 64, originalPrice: 80, sku: "008", type: "עגילים", img: "./images/earrings-kuartz.jpg.png", desc: "עגילים עדינים ומלאי חן עם אבני קוורץ ורוד טבעיות ומבריקות. הליפוף המוזהב סביב האבן מעניק להן נוכחות יוקרתית וייחודית לכל הופעה.", material: "אבן קוורץ ורוד, חוט ליפוף נחושת זהוב", stoneSize: "כ-1.3 ס\"מ", totalLength: "כ-3 ס\"מ" },
+            { id: 3, title: "עגילי חישוק - קשת הצבעים", price: 80, originalPrice: 100, sku: "018", type: "עגילים", img: "./images/earrings-hishuk.jpg.png", desc: "עגילי חישוק מרהיבים המשלבים קשת צבעים ייחודית של חרוזי צ'יפס קטנים המשולבים לאורך החישוק. עיצוב צבעוני, יפהפה ומרשים.", material: "חרוזי צ'יפס צבעוניות בגוון טבעי, חוט נחושת זהוב", stoneSize: "1.6 ס\"מ", totalLength: "כ-3 ס\"מ" },
+            { id: 4, title: "תליון אמטיסט סגול בוהק", price: 96, originalPrice: 120, sku: "001", type: "תליון", img: "./images/taliyon-amethyst.jpg.JPG", desc: "תליון יפהפה ומיוחד עם אבן אמטיסט (אחלמה) סגולה מבריקה מלוטשת קלות. האבן עטופה באמנות בחוט ליפוף זהוב, ויוצרת מראה יוקרתי ומיוחד.", material: "אבן אמטיסט סגולה בוהקת, חוט ליפוף נחושת זהוב", size: "כ-3.5*2 ס\"מ" },
+            { id: 5, title: "תליון אמטיסט סגול טבעי", price: 96, originalPrice: 120, sku: "002", type: "תליון", img: "./images/taliyon-amethyst-natural.jpg.png", desc: "תליון פראי ועוצמתי המציג אבן אמטיסט בצורתה הגולמית והטבעית ביותר. מבנה הגביש הייחודי נשמר במלואו ועטוף בליפוף זהב שמדגיש את המראה הטבעי.", material: "גביש אמטיסט סגול גולמי, חוט ליפוף מצופה זהב", size: "כ-4*2.5 סwhom\"מ" },
+            { id: 6, title: "תליון סיטרין - כסף 925", price: 120, originalPrice: 150, sku: "003", type: "תליון", img: "./images/taliyon-sitrin.jpg.png", desc: "תליון יוקרתי עם אבן סיטרין בגוון צהוב-דבש חמים וקורן, המסמלת שפע ואנרגיה חיובית. התליון משולב ישירות עם שרשרת כסף 925 להשלמת המראה המלכותי.", material: "אבן סיטרין טבעית, חוט ליפוף יוקרתי, שרשרת כסף 925", size: "כ-2.8*1.8 ס\"מ" },
+            { id: 7, title: "תליון סודליט כחול-לבן", price: 64, originalPrice: 80, sku: "004", type: "תליון", img: "./images/taliyon-sodalite.jpg.png", desc: "תליון מרשים מאבן סודליט טבעית המציגה טקסטורות עמוקות של כחול עמוק משולב בעורקי לבן ייחודיים. כל אבן היא יצירת אמנות של הטבע בפני עצמה.", material: "אבן סודליט כחולה טבעית, חוט ליפוף נחושת מצופה זהב", size: "כ-3*2 ס\"מ" },
+            { id: 8, title: "עגילי סודליט כחול-לבן", price: 64, originalPrice: 80, sku: "005", type: "עגילים", img: "./images/earrings-sodalite.jpg.png", desc: "עגילי אבן סודליט תואמים המעניקים מראה אלגנטי עם נוכחות מלכותית. השילוב בין הכחול העמוק לזהב המלפף יוצר ניגודיות מושלמת ומחמיאה.", material: "אבני סודליט כחול-לבן, חוט ליפוף נחושת מצופה זהב", stoneSize: "כ-1.2*1.2 ס\"מ", totalLength: "כ-3.5 ס\"מ" },
+            { id: 9, title: "סט תליון ועגילים סודליט", price: 112, originalPrice: 140, sku: "006", type: "סט תכשיטים", img: "./images/set-sodalite.jpg.png", desc: "הסט המלא והמלכותי שלנו הכולל את התליון המרשים ועגילי הסודליט התואמים במחיר משתלם ומיוחד. מתנה מושלמת לעצמך או לאדם קרוב.", material: "אבני סודליט כחולות, חוט ליפוף נחושת מוזהב", size: "סט של 3 פריטים" },
+            { id: 10, title: "עגילי קבושון ורודות", price: 64, originalPrice: 80, sku: "007", type: "עגילים", img: "./images/earrings-kabushon.jpg.JPG", desc: "עגילים צבעוניים ויפהפיים עם קבושונים עגולים מבריקים בגוון ורוד-סגול עז עם דוגמת סדקים מרהיבה. הקבושונים עטופים בעדינות בחוט ליפוף מוזהב, ויוצרות מראה צבעוני ומלא חיים.", material: "אבני קבושון ורודות, חוט ליפוף נחושת מוזהב", stoneSize: "קוטר כ-1.8 ס\"מ", totalLength: "כ-4 ס\"מ" },
+            { id: 11, title: "עגילי קבושון ורדים", price: 64, originalPrice: 80, sku: "015", type: "עגילים", img: "./images/earrings-roses.jpg.png", desc: "עגילים צבעוניים ומלאי חיים עם דוגמה מרהיבה של ורדים בתוך אבני הקבושון. מעניקים מראה פורח ומלא חיים.", material: "קבושון אקרילי מעוצב, ליפוף נחושת מצופה זהב", stoneSize: "קוטר כ-1.4 ס\"מ", totalLength: "כ-3.5 ס\"מ" },
+            { id: 12, title: "תליון קבושון ורדים", price: 64, originalPrice: 80, sku: "016", type: "תליון", img: "./images/taliyon-kabushon-vradim.jpg.png", desc: "תליון צבעוני ויפהפה עם קבושון אליפסי מבריק בעל דוגמת ורדים מרהיבה. הקבושון עטוף בעדינות בחוט ליפוף מוזהב, ויוצר מראה עדין ומלא חיים.", material: "קבושון אקרילי צבוע, חוט ליפוף נחושת מוזהב", size: "1.8*1.3 ס\"מ" },
+            { id: 13, title: "סט תליון ועגילים קבושון ורדים", price: 112, originalPrice: 140, sku: "017", type: "סט תכשיטים", img: "./images/set-kabushon-vradim.jpg.png", desc: "סט תליון ועגילים צבעוניים יפהפיים עם קבושונים אליפסיים מבריקים בדוגמת ורדים מרהיבה. הקבושונים עטופים בעדינות בחוט ליפוף מוזהב, למראה פורח ומלא חיים.", material: "קבושונים אקריליים מעוצבים, חוט ליפוף נחושת מוזהב", size: "תליון + זוג עגילים תואמים" },
+            { id: 14, title: "עגילי אפטיט כחול", price: 64, originalPrice: 80, sku: "012", type: "עגילים", img: "./images/earrings-apatite-blue.jpg.png", desc: "עגילים מרשימים וייחודיים המשלבים אבני אפטיט (Apatite) טבעיות בגוון כחול-טורקיז עמוק ומהפנט. שילוב מושלם של טבע ואלגנטיות.", material: "אבני אפטיט כחולות טבעיות, חוט ליפוף מוזהב איכותי", stoneSize: "כ-1*1 ס\"מ", totalLength: "כ-3.5 ס\"מ" },
+            { id: 15, title: "תליון מלכיט ירוק", price: 64, originalPrice: 80, sku: "014", type: "תליון", img: "./images/taliyon-malachite-green.jpg.png", desc: "תליון עוצר נשימה המציג אבן מלכיט (Malachite) ירוקה טבעית בגווני ירוק שונים המאפיינים אבן זו. נוכחות חזקה ויוקרתית.", material: "אבן מלכיט ירוקה טבעית, חוט ליפוף נחושת מוזהב", size: "כ-3.2*2.2 ס\"מ" },
+            { id: 16, title: "תליון אפטיט כחול", price: 64, originalPrice: 80, sku: "011", type: "תליון", img: "./images/taliyon-apatite.png", desc: "תליון מרשים במיוחד מאבן אפטיט כחול טבעי, בגוון יפהפה של כחול-ירוק, עטופה בעדינות בחוט זהוב, ויוצרת שילוב צבעים מעורר השראה.", material: "אבן אפטיט כחול טבעי גולמי, חוט ליפוף נחושת מוזהב.", size: "כ- 2*2 ס\"מ" },
+            { id: 17, title: "סט תליון ועגילים אפטיט כחול", price: 112, originalPrice: 140, sku: "013", type: "סט תכשיטים", img: "./images/set-apatite.png", desc: "סט תליון ועגילים מרשימים במיוחד מאבן אפטיט כחול טבעי, בגוון יפהפה של כחול-ירוק, עטופים בעדינות בחוט מוזהב, ויוצרים שילוב צבעים מעורר השראה.", material: "אבן אפטיט כחול טבעי גולמי, חוט ליפוף נחושת בציפוי זהב.", size: "גודל האבן של התליון: כ- 2*2 ס\"מ<br>גודל האבן של העגילים: כ- 1*1 ס\"מ<br>אורך כולל של העגילים: כ-3 ס\"מ" }
         ];
 
         let cart = [];
@@ -380,6 +385,7 @@ function showView(viewName, isPopState = false) {
         function openCartModal() { document.getElementById('cart-modal').classList.remove('hidden'); }
         function closeCartModal() { document.getElementById('cart-modal').classList.add('hidden'); }
 
+// פונקציית רינדור הגלריה עם קו אדום ומחיר מבצע
         function renderGallery() {
             const grid = document.getElementById('products-grid');
             grid.innerHTML = '';
@@ -389,13 +395,18 @@ function showView(viewName, isPopState = false) {
                         <div class="relative bg-stone-100 h-64">
                             <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300/eee/666?text=${encodeURIComponent(p.title)}'">
                             <span class="absolute top-3 right-3 text-[10px] uppercase bg-white/90 px-2.5 py-1 rounded-md font-medium tracking-wider shadow-sm text-stone-700">${p.type}</span>
+                            <span class="absolute top-3 left-3 text-[10px] font-bold bg-red-600 text-white px-2.5 py-1 rounded-md shadow-sm">מבצע השקה!</span>
                         </div>
                         <div class="p-5 flex-grow flex flex-col justify-between">
                             <div>
                                 <h3 class="font-serif text-base text-stone-900 font-medium mb-1">${p.title}</h3>
                                 <div class="flex justify-between items-center mt-2">
                                     <span class="text-xs text-stone-400 font-mono">מק"ט: ${p.sku}</span>
-                                    <span class="font-bold text-stone-950">${p.price} ₪</span>
+                                    <div class="text-left">
+                                        <span class="text-xs text-red-500 line-through decoration-red-600 font-medium ml-1.5">${p.originalPrice} ₪</span>
+                                        <span class="font-bold text-emerald-800 text-sm">מבצע:</span>
+                                        <span class="font-bold text-stone-950">${p.price} ₪</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="w-full mt-5 bg-stone-900 text-white py-3 rounded-xl text-xs font-medium text-center tracking-wide pointer-events-none">
@@ -407,6 +418,7 @@ function showView(viewName, isPopState = false) {
             });
         }
 
+        // פונקציית דף מוצר מעודכנת הכוללת שדרוגים ב-20% הנחה ועיצוב מחירי מבצע
         function openProductPage(id) {
             const p = products.find(prod => prod.id === id);
             const container = document.getElementById('product-detail-container');
@@ -448,38 +460,38 @@ function showView(viewName, isPopState = false) {
                 upgradeSectionHtml = `
                     <div class="space-y-4 bg-stone-50 p-4 rounded-xl border border-stone-100">
                         <div>
-                            <label class="block text-xs font-bold text-stone-700 mb-1.5">וריאציות נוספות:</label>
+                            <label class="block text-xs font-bold text-stone-700 mb-1.5">וריאציות נוספות (מחירי מבצע השקה!):</label>
                             <select id="detail-upgrade" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
                                 <option value="0">כסף 925 (סטנדרט)</option>
-                                <option value="-70">חוט נחושת זהוב (-70 ₪)</option>
-                                <option value="20">גולדפילד איכותי (+20 ₪)</option>
+                                <option value="-56">חוט נחושת זהוב (מבצע: -56 ₪ במקום -70 ₪)</option>
+                                <option value="16">גולדפילד איכותי (מבצע: +16 ₪ במקום +20 ₪)</option>
                             </select>
                         </div>
                     </div>
                 `;
             } else {
-                let price925 = 70;
-                let priceGold = 90;
+                let original925 = 70, originalGold = 90;
                 
                 if (p.type === "סט תכשיטים") {
-                    price925 = 130;
-                    priceGold = 170;
+                    original925 = 130; originalGold = 170;
                 } else if (p.sku === "001" || p.sku === "002") {
-                    price925 = 130;
-                    priceGold = 150;
+                    original925 = 130; originalGold = 150;
                 }
+
+                let sale925 = Math.round(original925 * 0.8);
+                let saleGold = Math.round(originalGold * 0.8);
 
                 upgradeSectionHtml = `
                     <div class="mt-4 pt-4 border-t border-stone-200">
                         <p class="text-sm font-extrabold text-amber-900 mb-3 bg-amber-50 p-3.5 rounded-xl border border-amber-200 leading-relaxed text-center">
-                            ✨ רוצים לשדרג את התכשיט? ניתן לשדרג את כל המתכות לכסף 925 או לגולדפילד איכותי! ✨
+                            ✨ מבצע השקה: 20% הנחה גם על השדרוגים! ✨
                         </p>
                         <div>
                             <label class="block text-xs font-bold text-stone-700 mb-1.5">שדרוג סוג המתכת</label>
                             <select id="detail-upgrade" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
                                 <option value="0">ללא שדרוג (בסיס)</option>
-                                <option value="${price925}">שדרוג לכסף 925 איכותי (+${price925} ₪)</option>
-                                <option value="${priceGold}">שדרוג לגולדפילד יוקרתי (+${priceGold} ₪)</option>
+                                <option value="${sale925}">שדרוג לכסף 925 איכותי (מבצע: +${sale925} ₪ במקום +${original925} ₪)</option>
+                                <option value="${saleGold}">שדרוג לגולדפילד יוקרתי (מבצע: +${saleGold} ₪ במקום +${originalGold} ₪)</option>
                             </select>
                         </div>
                     </div>
@@ -497,7 +509,10 @@ function showView(viewName, isPopState = false) {
                         <div>
                             <span class="text-xs font-bold text-stone-400 uppercase tracking-widest">${p.type} • מק"ט ${p.sku}</span>
                             <h2 class="text-3xl font-serif text-stone-900 mt-1 mb-4">${p.title}</h2>
-                            <p class="text-2xl font-bold text-emerald-800 mb-6">${p.price} ₪</p>
+                            <div class="flex items-center gap-2 mb-6">
+                                <span class="text-stone-500 line-through decoration-red-600 text-lg font-medium">${p.originalPrice} ₪</span>
+                                <span class="text-2xl font-bold text-stone-950">מבצע השקה: ${p.price} ₪</span>
+                            </div>
                             <div class="space-y-4 border-t border-b border-stone-100 py-6 mb-6">
                                 <p class="text-stone-700 text-sm leading-relaxed">${p.desc}</p>
                                 <div class="text-xs text-stone-500 space-y-1">
@@ -520,7 +535,7 @@ function showView(viewName, isPopState = false) {
             `;
             showView('product');
         }
-
+        
         function addToCartFromPage(event, id) {
             if(event) event.preventDefault();
             const product = products.find(p => p.id === id);
