@@ -627,37 +627,58 @@ let upgradeSectionHtml = '';
             document.getElementById('checkout-total').innerText = (subtotal + shippingVal) + " ₪";
         }
 
-        // תיקון אגרסיבי והבטחת טעינת רכיב ה-PDF בזמן אמת מתוך הפונקציה
-        async function triggerPdfSave() {
-            const element = document.querySelector('#view-summary .max-w-3xl');
-            const orderId = document.getElementById('summary-order-id').innerText;
-            
-            if (typeof html2pdf === 'undefined') {
-                const btn = document.querySelector('button[onclick="triggerPdfSave()"]');
-                const originalText = btn.innerText;
-                btn.innerText = "טוען רכיב PDF...";
-                
-                await new Promise((resolve, reject) => {
-                    const script = document.createElement('script');
-                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-                    script.onload = resolve;
-                    script.onerror = reject;
-                    document.head.appendChild(script);
-                });
-                btn.innerText = originalText;
-            }
-
-            const opt = {
-                margin:       [10, 10, 10, 10],
-                filename:     `order-${orderId}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, logging: false, letterRendering: true }, 
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).save();
+// פונקציית שמירה והורדת PDF מתוקנת ויציבה
+async function triggerPdfSave() {
+    const element = document.querySelector('#view-summary .max-w-3xl');
+    const orderId = document.getElementById('summary-order-id').innerText || "order";
+    
+    // וידוא שהספרייה קיימת, ואם לא - טעינה דינמית מאובטחת
+    if (typeof html2pdf === 'undefined') {
+        const btn = document.querySelector('button[onclick="triggerPdfSave()"]');
+        const originalText = btn ? btn.innerText : "";
+        if(btn) btn.innerText = "טוען רכיב PDF...";
+        
+        try {
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        } catch (e) {
+            alert("לא ניתן לטעון את רכיב ה-PDF. אנא השתמש באפשרות ההדפסה הרגילה.");
+            if(btn) btn.innerText = originalText;
+            return;
         }
+        if(btn) btn.innerText = originalText;
+    }
 
+    // הגדרות אופטימליות למניעת רעידות וחיתוכי עמודים
+    const opt = {
+        margin:       [15, 15, 15, 15],
+        filename:     `order-${orderId}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { 
+            scale: 2, 
+            useCORS: true, 
+            logging: false,
+            letterRendering: true,
+            scrollY: 0
+        }, 
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // הפעלה רציפה של המנוע
+    try {
+        html2pdf().set(opt).from(element).save();
+    } catch (error) {
+        console.error("PDF Generation error:", error);
+        // גיבוי למקרה חירום - פתיחת חלונית הדפסה של הדפדפן (שם ניתן גם לבחור שמירה כ-PDF)
+        window.print();
+    }
+}
+        
         // הפעלת חלונית הדפסה נקייה המנוהלת באמצעות ה-CSS Print Media Query
         function triggerPrintWithHeader() {
             window.print();
