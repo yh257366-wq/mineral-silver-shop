@@ -470,13 +470,15 @@ function showView(viewName, isPopState = false) {
                     </div>
                 `;
             } else {
-                let original925 = 70, originalGold = 90;
-                
-                if (p.type === "סט תכשיטים") {
-                    original925 = 130; originalGold = 170;
-                } else if (p.sku === "001" || p.sku === "002") {
-                    original925 = 130; originalGold = 150;
-                }
+    let original925 = 70, originalGold = 90;
+    
+    if (p.type === "סט תכשיטים") {
+        original925 = 130; originalGold = 170;
+    } else if (p.sku === "001" || p.sku === "002") {
+        original925 = 130; originalGold = 150;
+    } else if (p.sku === "018") {
+        original925 = 80; originalGold = 100;
+    }
 
                 let sale925 = Math.round(original925 * 0.8);
                 let saleGold = Math.round(originalGold * 0.8);
