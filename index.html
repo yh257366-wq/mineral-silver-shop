@@ -881,16 +881,22 @@ window.addEventListener('DOMContentLoaded', () => {
     const currentHash = window.location.hash.replace('#', '');
     const validViews = ['gallery', 'product', 'checkout', 'about', 'contact', 'summary'];
     
-    if (validViews.includes(currentHash)) {
+    // אם המשתמש הגיע לנתיב מוצר אך המיכל ריק (למשל ברענון או כניסה ישירה), נחזיר אותו לגלריה
+    if (currentHash === 'product' && !document.getElementById('product-detail-container').innerHTML.trim()) {
+        showView('gallery');
+        history.replaceState({ view: 'gallery' }, "", "#gallery");
+    } else if (validViews.includes(currentHash)) {
         showView(currentHash);
     } else {
-        showView('gallery'); // הדבר החסר: מציג את הגלריה בפועל
-        history.replaceState({ view: 'gallery' }, "", "#gallery"); // מעדכן את הכתובת בצורה נקייה
+        showView('gallery');
+        history.replaceState({ view: 'gallery' }, "", "#gallery");
     }
+    
+    // וידוא הרצה וטעינה תקינה של הגלריה והעגלה בכל מקרה
+    renderGallery();
+    updateNavCount();
 });
-
-         updateNavCount();
-        renderGallery();
+        
     </script>
 </body>
 </html>
