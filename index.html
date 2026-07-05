@@ -725,7 +725,7 @@ async function handleFormSubmit(e) {
             e.preventDefault();
             if(document.getElementById('order-honey-website').value !== "" || document.getElementById('order-honey-nickname').value !== "") return;
             
-            const shippingSelector = document.getElementById('shipping-selector');
+            let shippingSelector = document.getElementById('shipping-selector');
             if (shippingSelector.value === "") {
                 alert("אנא בחר שיטת משלוח מהרשימה כדי להמשיך ברכישה.");
                 shippingSelector.focus();
@@ -857,7 +857,7 @@ await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
             localStorage.removeItem('mineral_silver_cart');
             updateNavCount();
             e.target.reset();
-const shippingSelector = document.getElementById('shipping-selector');
+shippingSelector = document.getElementById('shipping-selector');
 if (shippingSelector) shippingSelector.selectedIndex = 0;
             showView('summary');
 
