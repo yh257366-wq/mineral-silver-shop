@@ -856,6 +856,8 @@ await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
             localStorage.removeItem('mineral_silver_cart');
             updateNavCount();
             e.target.reset();
+const shippingSelector = document.getElementById('shipping-selector');
+if (shippingSelector) shippingSelector.selectedIndex = 0;
             showView('summary');
 
             if (typeof submitBtn !== 'undefined' && submitBtn) {
