@@ -820,18 +820,15 @@ async function handleFormSubmit(e) {
                     order_id: orderId 
                 });
 
-                // 3. שליחת מייל סיכום הזמנה ללקוח - הוספנו מפתחות חלופיים נפוצים לגיבוי
-                await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
-                    to_email: customerEmail,
-                    email: customerEmail, // גיבוי למקרה שהשדה בתבנית קרוי email
-                    customer_email: customerEmail, // גיבוי נוסף
-                    customer_name: name,
-                    order_items: itemsHtml, 
-                    shipping_method: shippingText,
-                    total_price: total + " ₪",
-                    order_id: orderId 
-                });
-
+// 3. שליחת מייל סיכום הזמנה ללקוח מותאם אישית
+await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
+    to_email: customerEmail,
+    customer_name: name,
+    order_id: orderId,
+    order_items: itemsHtml, 
+    shipping_method: shippingText,
+    total_price: total + " ₪"
+});
             } catch (err) {
                 // הדפסת השגיאה אך אינטגרציה רכה - מאפשרים מעבר לדף תודה גם אם המייל ללקוח נכשל
                 console.error("שגיאה חלקית בתהליך שליחת המיילים:", err);
