@@ -874,7 +874,11 @@ window.addEventListener('popstate', function(event) {
     }
 });
 
-// בדיקה בעת טעינת העמוד האם יש hash בכתובת והצגת הדף המתאים
+// הפעלה ישירה של הגלריה ועדכון העגלה מיד עם קריאת הסקריפט
+renderGallery();
+updateNavCount();
+
+// ניהול הניווט וה-Hash בעת טעינת העמוד
 window.addEventListener('DOMContentLoaded', () => {
     const currentHash = window.location.hash.replace('#', '');
     const validViews = ['gallery', 'product', 'checkout', 'about', 'contact', 'summary'];
@@ -889,12 +893,7 @@ window.addEventListener('DOMContentLoaded', () => {
         showView('gallery');
         history.replaceState({ view: 'gallery' }, "", "#gallery");
     }
-    
-    // וידוא הרצה וטעינה תקינה של הגלריה והעגלה בכל מקרה
-    renderGallery();
-    updateNavCount();
 });
-        
-    </script>
+</script>
 </body>
 </html>
