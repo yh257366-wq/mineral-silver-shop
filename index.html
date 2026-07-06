@@ -622,7 +622,7 @@ let upgradeSectionHtml = '';
             const subtotal = cart.reduce((sum, item) => sum + ((item.price + item.upgradeVal) * item.quantity), 0);
             document.getElementById('checkout-subtotal').innerText = subtotal + " ₪";
             
-            let shippingSelector = document.getElementById('shipping-selector');
+            const shippingSelector = document.getElementById('shipping-selector');
 const shippingVal = shippingSelector.value !== "" ? parseInt(shippingSelector.value) : 0;
             
             document.getElementById('checkout-total').innerText = (subtotal + shippingVal) + " ₪";
@@ -725,7 +725,7 @@ async function handleFormSubmit(e) {
             e.preventDefault();
             if(document.getElementById('order-honey-website').value !== "" || document.getElementById('order-honey-nickname').value !== "") return;
             
-            shippingSelector = document.getElementById('shipping-selector');
+            let shippingSelector = document.getElementById('shipping-selector');
             if (shippingSelector.value === "") {
                 alert("אנא בחר שיטת משלוח מהרשימה כדי להמשיך ברכישה.");
                 shippingSelector.focus();
