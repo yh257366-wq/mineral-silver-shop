@@ -622,8 +622,8 @@ let upgradeSectionHtml = '';
             const subtotal = cart.reduce((sum, item) => sum + ((item.price + item.upgradeVal) * item.quantity), 0);
             document.getElementById('checkout-subtotal').innerText = subtotal + " ₪";
             
-            const shippingSelector = document.getElementById('shipping-selector');
-            const shippingVal = shippingSelector.value !== "" ? parseInt(shippingSelector.value) : 0;
+            let shippingSelector = document.getElementById('shipping-selector');
+const shippingVal = shippingSelector.value !== "" ? parseInt(shippingSelector.value) : 0;
             
             document.getElementById('checkout-total').innerText = (subtotal + shippingVal) + " ₪";
         }
@@ -725,7 +725,7 @@ async function handleFormSubmit(e) {
             e.preventDefault();
             if(document.getElementById('order-honey-website').value !== "" || document.getElementById('order-honey-nickname').value !== "") return;
             
-            let shippingSelector = document.getElementById('shipping-selector');
+            shippingSelector = document.getElementById('shipping-selector');
             if (shippingSelector.value === "") {
                 alert("אנא בחר שיטת משלוח מהרשימה כדי להמשיך ברכישה.");
                 shippingSelector.focus();
@@ -853,19 +853,23 @@ await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
                 <span class="text-xl text-emerald-800 font-black">${total} ₪</span>
             `;
             
-            cart = [];
-            localStorage.removeItem('mineral_silver_cart');
-            updateNavCount();
-            e.target.reset();
-shippingSelector = document.getElementById('shipping-selector');
-if (shippingSelector) shippingSelector.selectedIndex = 0;
-            showView('summary');
+cart = [];
+localStorage.removeItem('mineral_silver_cart');
+updateNavCount();
+e.target.reset();
 
-            if (typeof submitBtn !== 'undefined' && submitBtn) {
-                submitBtn.innerText = "אישור ושליחת הזמנה";
-                submitBtn.disabled = false;
-            }
-        }
+// בדיקה פשוטה אם האלמנט קיים ואיפוס הבחירה שלו
+if (shippingSelector) {
+    shippingSelector.selectedIndex = 0;
+}
+
+showView('summary');
+
+if (typeof submitBtn !== 'undefined' && submitBtn) {
+    submitBtn.innerText = "אישור ושליחת הזמנה";
+    submitBtn.disabled = false;
+}
+}
 // האזנה לחיצי הניווט (קדימה/אחורה) של הדפדפן
 window.addEventListener('popstate', function(event) {
     if (event.state && event.state.view) {
