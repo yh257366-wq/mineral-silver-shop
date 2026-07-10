@@ -662,7 +662,7 @@ async function triggerPdfSave() {
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { 
             scale: 2, 
-            useCORS: true, 
+            useCORS: false, 
             logging: false,
             letterRendering: true,
             scrollY: 0
@@ -748,7 +748,7 @@ async function handleFormSubmit(e) {
             const fullAddress = `עיר: ${city}, רחוב: ${street}, מיקוד: ${zip}`;
             const notes = document.getElementById('form-notes').value.trim() || "אין";
 
-            const shippingVal = parseInt(shippingSelector.value);
+            const shippingVal = shippingSelector.value ? parseInt(shippingSelector.value) : 0;
             const shippingText = shippingSelector.options[shippingSelector.selectedIndex].text;
             
             const subtotal = cart.reduce((sum, item) => sum + ((item.price + item.upgradeVal) * item.quantity), 0);
