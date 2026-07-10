@@ -879,12 +879,16 @@ window.addEventListener('popstate', function(event) {
     }
 });
 
-// הפעלה ישירה של הגלריה ועדכון העגלה מיד עם קריאת הסקריפט
-renderGallery();
-updateNavCount();
-
-// ניהול הניווט וה-Hash בעת טעינת העמוד
+// ניהול הניווט, ה-Hash וטעינת הגלריה רק לאחר שה-DOM מוכן במלואו
 window.addEventListener('DOMContentLoaded', () => {
+    // הפעלה בטוחה של הגלריה ועדכון העגלה רק כשהאלמנטים קיימים בדף
+    if (typeof products !== 'undefined') {
+        renderGallery();
+    } else {
+        console.error("שגיאה: מערך המוצרים (products) אינו מוגדר בקוד.");
+    }
+    updateNavCount();
+
     const currentHash = window.location.hash.replace('#', '');
     const validViews = ['gallery', 'product', 'checkout', 'about', 'contact', 'summary'];
     
