@@ -426,19 +426,24 @@ function openProductPage(id) {
     const container = document.getElementById('product-detail-container');
     
     let dimensionsHtml = '';
-    if (p.type === "עגילים") {
+    
+    // אם הגדרת במפורש גודל אבן או אורך (כמו בסט או בעגילים)
+    if (p.stoneSize || p.totalLength) {
         let sizeLabel = "גודל האבן";
         if (["007", "013", "014", "601"].includes(p.sku)) {
             sizeLabel = "גודל הקבושון";
         } else if (p.sku === "016") {
             sizeLabel = "קוטר החישוק";
+        } else if (p.type === "סט תכשיטים") {
+            sizeLabel = "גודל האבנים"; // התאמה קלה לסט
         }
 
         dimensionsHtml = `
-            <p><strong>${sizeLabel}:</strong> ${p.stoneSize || "כ-1.2*1.2 ס\"מ"}</p>
-            <p><strong>אורך כולל של העגיל:</strong> ${p.totalLength || "כ-3.5 ס\"מ"}</p>
+            ${p.stoneSize ? `<p><strong>${sizeLabel}:</strong> ${p.stoneSize}</p>` : ''}
+            ${p.totalLength ? `<p><strong>אורך כולל:</strong> ${p.totalLength}</p>` : ''}
         `;
     } else if (p.size) {
+        // גיבוי למוצרים ישנים שמשתמשים רק בשדה size
         dimensionsHtml = `<p><strong>גודל/מידה:</strong> ${p.size}</p>`;
     }
 
