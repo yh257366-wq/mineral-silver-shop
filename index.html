@@ -647,9 +647,13 @@ let upgradeSectionHtml = '';
                 const unitPrice = item.price + item.upgradeVal;
                 const totalItemPrice = unitPrice * item.quantity;
                 
-                // שליפת מחיר המקור מתוך פריט הנתונים (או שימוש ב-item.price כמקור)
+                // 1. מחיר המקור
                 const originalProductPrice = item.price; 
                 
+                // 2. ניקוי דינמי של ביטויים כמו "(במקום...)" מטקסט השדרוג כדי לא להעמיס
+                let cleanUpgradeText = item.upgradeText || '';
+                cleanUpgradeText = cleanUpgradeText.replace(/\s*\(במקום\s*[^)]+\)/g, '');
+
                 return `
                     <div class="flex gap-4 items-center py-4 text-sm border-b border-stone-100">
                         <!-- כפתור מחיקה -->
@@ -658,22 +662,22 @@ let upgradeSectionHtml = '';
                         <!-- תמונת המוצר -->
                         <img src="${item.img}" alt="${item.title}" class="w-12 h-12 object-cover rounded-lg border border-stone-200" onerror="this.src='https://via.placeholder.com/50'">
                         
-                        <!-- פירוט המוצר: הכל כהה, הדגשה באמצעות גדלים בלבד -->
+                        <!-- פירוט המוצר: הכל כהה, מינימליסטי וקריא -->
                         <div class="flex-1">
-                            <!-- כותרת המוצר ומחיר הבסיס המקורי באותה שורה ובאותו גוון -->
+                            <!-- שם המוצר והמחיר המקורי לידו באותו הגודל ובצורה נקייה -->
                             <p class="font-bold text-stone-950 text-base">
                                 ${item.title}
-                                <span class="text-sm font-normal mr-2 text-stone-950">(מחיר בסיס: ₪${originalProductPrice})</span>
+                                <span class="font-bold mr-3 text-stone-950">₪${originalProductPrice}</span>
                             </p>
                             
-                            <!-- שדרוגים: טקסט כהה, גודל קטן (text-xs) -->
-                            <p class="text-xs text-stone-950 mt-1">${lengthLine}${item.upgradeText}</p>
+                            <!-- שדרוגים: ללא תוספות מיותרות ובגודל קטן -->
+                            <p class="text-xs text-stone-950 mt-1">${lengthLine}${cleanUpgradeText}</p>
                             
-                            <!-- פירוט כמות: טקסט כהה, גודל קטן (text-xs) -->
-                            <p class="text-xs text-stone-950 mt-0.5">כמות: ${item.quantity} × מחיר משודרג: ₪${unitPrice}</p>
+                            <!-- כמות בלבד, ללא כפל מחירים משודרגים -->
+                            <p class="text-xs text-stone-950 mt-0.5">כמות: ${item.quantity}</p>
                         </div>
                         
-                        <!-- צד שמאל: מחיר סופי בלבד לשורה -->
+                        <!-- צד שמאל: מחיר סופי ברור לשורה -->
                         <div class="text-left">
                             <span class="text-xs text-stone-950 block">סה"כ פריט:</span>
                             <span class="font-bold text-base text-stone-950">₪${totalItemPrice}</span>
