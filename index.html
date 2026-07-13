@@ -633,7 +633,7 @@ let upgradeSectionHtml = '';
             document.getElementById('nav-cart-count').innerText = cart.reduce((sum, item) => sum + item.quantity, 0);
         }
 
-        function updateCheckoutDisplay() {
+       function updateCheckoutDisplay() {
             const container = document.getElementById('checkout-cart-items');
             if (cart.length === 0) {
                 container.innerHTML = `<p class="text-stone-400 text-center py-12 text-sm">עגלת הקניות ריקה.</p>`;
@@ -647,25 +647,42 @@ let upgradeSectionHtml = '';
                 const unitPrice = item.price + item.upgradeVal;
                 const totalItemPrice = unitPrice * item.quantity;
                 
+                // שליפת מחיר המקור מתוך פריט הנתונים (או שימוש ב-item.price כמקור)
+                const originalProductPrice = item.price; 
+                
                 return `
-                    <div class="flex gap-4 items-center py-4 text-sm">
+                    <div class="flex gap-4 items-center py-4 text-sm border-b border-stone-100">
+                        <!-- כפתור מחיקה -->
                         <button onclick="removeFromCart(${item.rowId})" class="text-red-500 font-bold text-xl hover:text-red-700 px-2" title="הסר פריט זה">×</button>
+                        
+                        <!-- תמונת המוצר -->
                         <img src="${item.img}" alt="${item.title}" class="w-12 h-12 object-cover rounded-lg border border-stone-200" onerror="this.src='https://via.placeholder.com/50'">
+                        
+                        <!-- פירוט המוצר: הכל כהה, הדגשה באמצעות גדלים בלבד -->
                         <div class="flex-1">
-                            <p class="font-medium text-stone-950">${item.title}</p>
-                            <p class="text-xs text-stone-500 mt-0.5">${lengthLine}${item.upgradeText}</p>
-                            <p class="text-xs text-stone-400 mt-1">כמות: ${item.quantity} × מחיר: ${unitPrice} ₪</p>
+                            <!-- כותרת המוצר ומחיר הבסיס המקורי באותה שורה ובאותו גוון -->
+                            <p class="font-bold text-stone-950 text-base">
+                                ${item.title}
+                                <span class="text-sm font-normal mr-2 text-stone-950">(מחיר בסיס: ₪${originalProductPrice})</span>
+                            </p>
+                            
+                            <!-- שדרוגים: טקסט כהה, גודל קטן (text-xs) -->
+                            <p class="text-xs text-stone-950 mt-1">${lengthLine}${item.upgradeText}</p>
+                            
+                            <!-- פירוט כמות: טקסט כהה, גודל קטן (text-xs) -->
+                            <p class="text-xs text-stone-950 mt-0.5">כמות: ${item.quantity} × מחיר משודרג: ₪${unitPrice}</p>
                         </div>
+                        
+                        <!-- צד שמאל: מחיר סופי בלבד לשורה -->
                         <div class="text-left">
-                            <span class="text-xs text-stone-400 block">סה"כ פריט:</span>
-                            <span class="font-semibold text-stone-900">${totalItemPrice} ₪</span>
+                            <span class="text-xs text-stone-950 block">סה"כ פריט:</span>
+                            <span class="font-bold text-base text-stone-950">₪${totalItemPrice}</span>
                         </div>
                     </div>
                 `;
             }).join('');
             updateTotal();
         }
-
         function removeFromCart(rowId) {
             cart = cart.filter(item => item.rowId !== rowId);
             saveCart();
