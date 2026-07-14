@@ -655,7 +655,13 @@ let upgradeSectionHtml = '';
                 cleanUpgradeText = cleanUpgradeText
                     .replace(/\s*\(במקום\s*[^)]+\)/g, '') // מסיר את הסוגריים עם המחיר הישן
                     .replace(/מבצע:\s*/g, '')             // מסיר "מבצע:"
-                    .replace(/מבצע\s*/g, '');             // מסיר "מבצע" (ליתר ביטחון)
+                    .replace(/מבצע\s*/g, '');             // מסיר "מבצע"
+
+                // 3. תיקון כיווניות הפלוס והמספר בשדרוג כדי שיוצג תמיד כ- +XX ₪
+                // מחפש מספרים שצמוד אליהם פלוס (למשל 16+ או +16) ומארגן אותם מחדש בפורמט LTR
+                cleanUpgradeText = cleanUpgradeText.replace(/(\+)?(\d+)(\+)?\s*₪/g, function(match, p1, p2, p3) {
+                    return `<span dir="ltr" class="inline-block">₪+${p2}</span>`;
+                });
 
                 return `
                     <div class="flex gap-4 items-center py-4 text-sm border-b border-stone-100">
@@ -665,15 +671,15 @@ let upgradeSectionHtml = '';
                         <!-- תמונת המוצר -->
                         <img src="${item.img}" alt="${item.title}" class="w-12 h-12 object-cover rounded-lg border border-stone-200" onerror="this.src='https://via.placeholder.com/50'">
                         
-                        <!-- פירוט המוצר (הריבוע הדמיוני הפנימי) -->
+                        <!-- פירוט המוצר (הבלוק המרכזי) -->
                         <div class="flex-1">
-                            <!-- שורת שם המוצר (ימין) ומחיר מקורי (שמאל) בגדלים שונים -->
-                            <div class="flex justify-between items-baseline mb-1">
+                            <!-- כותרת ומחיר מוצמדים ימינה עם רווח קטן וקבוע ביניהם -->
+                            <div class="flex items-baseline gap-3 mb-1 justify-start">
                                 <span class="font-bold text-stone-950 text-base">${item.title}</span>
-                                <span class="text-sm font-normal text-stone-600 ml-4">₪${originalProductPrice}</span>
+                                <span class="text-sm font-normal text-stone-600">₪${originalProductPrice}</span>
                             </div>
                             
-                            <!-- שדרוגים: ללא המילה "מבצע" וללא תוספות מיותרות -->
+                            <!-- שדרוגים: קריא וללא המילה "מבצע" -->
                             <p class="text-xs text-stone-950 mt-1">${lengthLine}${cleanUpgradeText}</p>
                             
                             <!-- כמות בלבד -->
@@ -681,7 +687,7 @@ let upgradeSectionHtml = '';
                         </div>
                         
                         <!-- צד שמאל קיצוני: מחיר סופי ברור לשורה -->
-                        <div class="text-left min-w-[80px]">
+                        <div class="text-left min-w-[85px]">
                             <span class="text-xs text-stone-950 block">סה"כ פריט:</span>
                             <span class="font-bold text-base text-stone-950">₪${totalItemPrice}</span>
                         </div>
