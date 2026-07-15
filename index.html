@@ -656,10 +656,16 @@ let upgradeSectionHtml = '';
                     .replace(/מבצע:\s*/g, '')             // מסיר "מבצע:"
                     .replace(/מבצע\s*/g, '');             // מסיר "מבצע"
 
-                // 3. תיקון כיווניות הפלוס והמספר בשדרוג כדי שיוצג תמיד כ- +XX ₪
-                // מחפש מספרים שצמוד אליהם פלוס (למשל 16+ או +16) ומארגן אותם מחדש בפורמט LTR
-                cleanUpgradeText = cleanUpgradeText.replace(/(\+)?(\d+)(\+)?\s*₪/g, function(match, p1, p2, p3) {
-                    return `<span dir="ltr" class="inline-block">₪+${p2}</span>`;
+                // 3. תיקון כיווניות חכם: מוסיף כיווניות LTR וסימן רק אם היה סימן מקורי (+ או -)
+                cleanUpgradeText = cleanUpgradeText.replace(/([-+])?(\d+)([-+])?\s*₪/g, function(match, signBefore, num, signAfter) {
+                    const sign = signBefore || signAfter || ''; // בודק אם היה פלוס או מינוס במקור
+                    if (sign) {
+                        // אם היה סימן (+ או -), נציג אותו בצד שמאל של המספר בצורה תקינה
+                        return `<span dir="ltr" class="inline-block">₪${sign}${num}</span>`;
+                    } else {
+                        // אם לא היה סימן (כמו במחיר סופי 64 או 80), נציג פשוט את המספר נקי
+                        return `₪${num}`;
+                    }
                 });
 
                 return `
@@ -695,7 +701,7 @@ let upgradeSectionHtml = '';
             }).join('');
             updateTotal();
         }
-        function removeFromCart(rowId) {
+       function removeFromCart(rowId) {
             cart = cart.filter(item => item.rowId !== rowId);
             saveCart();
             updateNavCount();
