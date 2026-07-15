@@ -524,14 +524,13 @@ let upgradeSectionHtml = '';
                     <label class="block text-xs font-bold text-stone-700 mb-1.5">וריאציות נוספות (מחירי מבצע השקה!):</label>
                     <select id="detail-upgrade" class="w-full border border-stone-300 p-2.5 rounded-lg bg-white text-sm">
                         <option value="0">כסף 925 (סטנדרט)</option>
-                        <option value="-56">חוט נחושת זהוב מבצע: -56 ₪ (במקום -70 ₪)</option>
-                        <option value="16">גולדפילד איכותי מבצע: +16 ₪ (במקום +20 ₪)</option>
+                        <option value="-56">חוט נחושת זהוב במבצע: 56- ₪ (מחיר סופי: 64 ₪! במקום 80 ₪)</option>
+                        <option value="16">גולדפילד איכותי במבצע: 16+ ₪ (במקום 20+ ₪)</option>
                     </select>
                 </div>
             </div>
         `;
-    } else {
-    // מחירי ברירת מחדל לשאר המוצרים באתר
+    } else {    // מחירי ברירת מחדל לשאר המוצרים באתר
     let original925 = 70, originalGold = 90;
     
     if (p.sku === "020") { 
