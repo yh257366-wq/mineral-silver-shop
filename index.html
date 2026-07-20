@@ -763,7 +763,7 @@ const shippingVal = shippingSelector.value !== "" ? parseInt(shippingSelector.va
         image:        { type: 'jpeg', quality: 0.95 },
         html2canvas:  { 
             scale: 2, 
-            useCORS: true, 
+            useCORS: false, 
             logging: false,
             letterRendering: true,
             scrollY: 0
@@ -772,9 +772,11 @@ const shippingVal = shippingSelector.value !== "" ? parseInt(shippingSelector.va
     };
 
     try {
+        // יצירה והורדה ישירה של הקובץ למחשב/לנייד ללא פתיחת דיאלוג הדפסה
         await html2pdf().set(opt).from(element).save();
     } catch (error) {
         console.error("PDF Generation error:", error);
+        alert("אירעה שגיאה ביצירת ה-PDF, מעביר להדפסה דפדפן...");
         window.print();
     }
 }
