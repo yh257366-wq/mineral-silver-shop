@@ -728,12 +728,14 @@ const shippingVal = shippingSelector.value !== "" ? parseInt(shippingSelector.va
             document.getElementById('checkout-total').innerText = (subtotal + shippingVal) + " ₪";
         }
 
-// פונקציית שמירה והורדת PDF מתוקנת ויציבה
-async function triggerPdfSave() {
+     async function triggerPdfSave() {
     const element = document.querySelector('#view-summary .max-w-3xl');
+    if (!element) {
+        alert("אלמנט הסיכום לא נמצא.");
+        return;
+    }
     const orderId = document.getElementById('summary-order-id').innerText || "order";
     
-    // וידוא שהספרייה קיימת, ואם לא - טעינה דינמית מאובטחת
     if (typeof html2pdf === 'undefined') {
         const btn = document.querySelector('button[onclick="triggerPdfSave()"]');
         const originalText = btn ? btn.innerText : "";
@@ -755,14 +757,13 @@ async function triggerPdfSave() {
         if(btn) btn.innerText = originalText;
     }
 
-    // הגדרות אופטימליות למניעת רעידות וחיתוכי עמודים
     const opt = {
-        margin:       [15, 15, 15, 15],
+        margin:       [10, 10, 10, 10],
         filename:     `order-${orderId}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
+        image:        { type: 'jpeg', quality: 0.95 },
         html2canvas:  { 
             scale: 2, 
-            useCORS: false, 
+            useCORS: true, 
             logging: false,
             letterRendering: true,
             scrollY: 0
@@ -770,16 +771,14 @@ async function triggerPdfSave() {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // הפעלה רציפה של המנוע
     try {
-        html2pdf().set(opt).from(element).save();
+        await html2pdf().set(opt).from(element).save();
     } catch (error) {
         console.error("PDF Generation error:", error);
-        // גיבוי למקרה חירום - פתיחת חלונית הדפסה של הדפדפן (שם ניתן גם לבחור שמירה כ-PDF)
         window.print();
     }
 }
-        
+       
         // הפעלת חלונית הדפסה נקייה המנוהלת באמצעות ה-CSS Print Media Query
         function triggerPrintWithHeader() {
             window.print();
@@ -821,7 +820,7 @@ async function triggerPdfSave() {
             });
         }
 
-async function handleFormSubmit(e) {
+            async function handleFormSubmit(e) {
             e.preventDefault();
             if(document.getElementById('order-honey-website').value !== "" || document.getElementById('order-honey-nickname').value !== "") return;
             
@@ -855,23 +854,28 @@ async function handleFormSubmit(e) {
             const total = subtotal + shippingVal;
             const orderId = "MG-" + Date.now().toString().slice(-6);
 
-            // בניית טבלת פריטים
+            // בניית טבלת פריטים כולל תמונות ברורות
             let itemsHtml = `<table style="width: 100%; border-collapse: collapse; text-align: right; direction: rtl; margin-bottom: 20px;">`;
             cart.forEach(i => {
                 let absoluteImgUrl = i.img;
-                
                 const optionLine = i.length !== "לא רלוונטי" ? `אורך שרשרת: ${i.length} | ` : '';
+                
+                let cleanUpgrade = (i.upgradeText || '')
+                    .replace(/\s*\(במקום\s*[^)]+\)/g, '')
+                    .replace(/מבצע:\s*/g, '')
+                    .replace(/מבצע\s*/g, '');
+
                 itemsHtml += `
                     <tr style="vertical-align: middle; border-bottom: 1px solid #e5e7eb;">
-                      <td style="padding: 18px 0 18px 15px; width: 90px;">
-                        <img style="height: 90px; width: 90px; object-fit: cover; border-radius: 12px; border: 1px solid #e5e7eb;" height="90" width="90" src="${absoluteImgUrl}" alt="item" onerror="this.src='https://via.placeholder.com/90'">
+                      <td style="padding: 12px 0 12px 15px; width: 70px;">
+                        <img style="height: 70px; width: 70px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb;" height="70" width="70" src="${absoluteImgUrl}" alt="מוצר" onerror="this.src='https://via.placeholder.com/70'">
                       </td>
-                      <td style="padding: 18px 10px; width: 100%; line-height: 1.6;">
-                        <div style="font-weight: 600; color: #1c1917; font-size: 15px;">${i.title}</div>
-                        <div style="font-size: 13px; color: #57534e; padding-top: 2px;">${optionLine}${i.upgradeText}</div>
-                        <div style="font-size: 12px; color: #78716c; padding-top: 4px; font-weight: 500;">כמות: ${i.quantity}</div>
+                      <td style="padding: 12px 10px; line-height: 1.5; text-align: right;">
+                        <div style="font-weight: 600; color: #1c1917; font-size: 14px;">${i.title}</div>
+                        <div style="font-size: 12px; color: #57534e; padding-top: 2px;">${optionLine}${cleanUpgrade}</div>
+                        <div style="font-size: 11px; color: #78716c; padding-top: 2px;">כמות: ${i.quantity}</div>
                       </td>
-                      <td style="padding: 18px 0 18px 0; white-space: nowrap; text-align: left; font-weight: 700; color: #064e3b; font-size: 15px;">
+                      <td style="padding: 12px 0; white-space: nowrap; text-align: left; font-weight: 700; color: #1c1917; font-size: 14px;">
                         ${(i.price + i.upgradeVal) * i.quantity} ₪
                       </td>
                     </tr>
@@ -879,7 +883,6 @@ async function handleFormSubmit(e) {
             });
             itemsHtml += `</table>`;
 
-            // הכנת הנתונים לגוגל שיטס מראש
             const formData = new FormData();
             formData.append("order_id", orderId); 
             formData.append("name", name);
@@ -898,14 +901,13 @@ async function handleFormSubmit(e) {
             formData.append("items", itemsText);
 
             try {
-                // 1. שמירת הנתונים בגוגל שיטס תחילה כדי שלא נפספס ליד בשל שגיאת מייל
                 await fetch(CORRECT_GOOGLE_URL, {
                     method: "POST",
                     body: formData,
                     mode: "no-cors"
                 }).catch(err => console.error("Google Sheets Error:", err));
 
-                // 2. שליחת מייל לבעל החנות
+                // מייל לבעל החנות עם משתנים מתוקנים
                 await emailjs.send("service_5lsrr43", "template_lw08urn", {
                     to_email: "yh257366@gmail.com",
                     to_name: "תכשיטי מינרל גולד",
@@ -914,30 +916,28 @@ async function handleFormSubmit(e) {
                     customer_phone: phone,
                     customer_address: fullAddress,
                     order_items: itemsHtml, 
-                    shipping_method: shippingText,
-                    total_price: total + " ₪",
+                    shipping_method: shippingText, 
+                    total_price: total + " ₪",     
                     customer_notes: notes,
                     order_id: orderId 
                 });
 
-// 3. שליחת מייל סיכום הזמנה ללקוח מותאם אישית
-await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
-    to_email: customerEmail,
-    customer_name: name,
-    order_id: orderId,
-    order_items: itemsHtml, 
-    shipping_method: shippingText,
-    total_price: total + " ₪"
-});
+                // מייל ללקוח עם משתנים מתוקנים
+                await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
+                    to_email: customerEmail,
+                    customer_name: name,
+                    order_id: orderId,
+                    order_items: itemsHtml, 
+                    shipping_method: shippingText, 
+                    total_price: total + " ₪"     
+                });
             } catch (err) {
-                // הדפסת השגיאה אך אינטגרציה רכה - מאפשרים מעבר לדף תודה גם אם המייל ללקוח נכשל
                 console.error("שגיאה חלקית בתהליך שליחת המיילים:", err);
             }
 
-            // עדכון ממשק המשתמש והצגת דף סיכום (מתבצע בכל מקרה)
             document.getElementById('summary-order-id').innerText = orderId;
             document.getElementById('print-order-id').innerText = orderId;
-            document.getElementById('summary-table-container').innerHTML = itemsHtml;
+            document.getElementById('summary-table-container').innerHTML = itemsHtml; 
             
             document.getElementById('summary-customer-details').innerHTML = `
                 <div><strong>שם מלא:</strong> ${name}</div>
@@ -953,24 +953,24 @@ await emailjs.send("service_5lsrr43", "template_qb0zn3z", {
                 <span class="text-xl text-emerald-800 font-black">${total} ₪</span>
             `;
             
-cart = [];
-localStorage.removeItem('mineral_silver_cart');
-updateNavCount();
-e.target.reset();
+            cart = [];
+            localStorage.removeItem('mineral_silver_cart');
+            updateNavCount();
+            e.target.reset();
 
-// בדיקה פשוטה אם האלמנט קיים ואיפוס הבחירה שלו
-if (shippingSelector) {
-    shippingSelector.selectedIndex = 0;
-}
+            if (shippingSelector) {
+                shippingSelector.selectedIndex = 0;
+            }
 
-showView('summary');
+            showView('summary');
 
-if (typeof submitBtn !== 'undefined' && submitBtn) {
-    submitBtn.innerText = "אישור ושליחת הזמנה";
-    submitBtn.disabled = false;
+            if (typeof submitBtn !== 'undefined' && submitBtn) {
+                submitBtn.innerText = "אישור ושליחת הזמנה";
+                submitBtn.disabled = false;
+            }
 }
-}
-// האזנה לחיצי הניווט (קדימה/אחורה) של הדפדפן
+       
+       // האזנה לחיצי הניווט (קדימה/אחורה) של הדפדפן
 window.addEventListener('popstate', function(event) {
     if (event.state && event.state.view) {
         showView(event.state.view, true);
